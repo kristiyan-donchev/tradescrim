@@ -10,7 +10,7 @@ function getSystemTheme() {
 
 function readStoredMode() {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return MODES.includes(stored) ? stored : 'system';
+  return MODES.includes(stored) ? stored : 'dark';
 }
 
 export function ThemeProvider({ children }) {
