@@ -142,7 +142,9 @@ router.post('/signup', async (req, res) => {
 
     const token = signToken(user.id);
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
-    res.status(201).json({ user: toPublicUser(user) });
+    // Also returned in the body — see the comment on persistSessionCookie in
+    // client/src/lib/api.js for why the client writes this cookie itself too.
+    res.status(201).json({ user: toPublicUser(user), token });
   } catch (err) {
     console.error('signup error', err.message);
     res.status(500).json({ error: 'Something went wrong creating your account.' });
@@ -171,7 +173,7 @@ router.post('/login', async (req, res) => {
 
     const token = signToken(user.id);
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
-    res.json({ user: toPublicUser(user) });
+    res.json({ user: toPublicUser(user), token });
   } catch (err) {
     console.error('login error', err.message);
     res.status(500).json({ error: 'Something went wrong logging you in.' });
@@ -280,7 +282,7 @@ router.post('/google/exchange', async (req, res) => {
     const sessionToken = signToken(user.id);
     res.cookie(COOKIE_NAME, sessionToken, COOKIE_OPTIONS);
     console.log('google exchange success', { userId: user.id, origin: req.headers.origin });
-    res.json({ user: toPublicUser(user) });
+    res.json({ user: toPublicUser(user), token: sessionToken });
   } catch (err) {
     console.error('google exchange error', err.message);
     res.status(500).json({ error: 'Something went wrong signing you in.' });

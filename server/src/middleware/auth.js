@@ -4,16 +4,6 @@ import { findUserById } from '../lib/users.js';
 export async function requireAuth(req, res, next) {
   const token = req.cookies?.[COOKIE_NAME];
   if (!token) {
-    // Temporary: diagnosing a report that Google sign-in appears to
-    // succeed (server logs a completed exchange) but the browser is
-    // logged out immediately after — this shows whether the session
-    // cookie ever makes it back at all on the very next request.
-    console.error('requireAuth: no session cookie', {
-      path: req.path,
-      cookieHeaderPresent: Boolean(req.headers.cookie),
-      origin: req.headers.origin,
-      userAgent: req.headers['user-agent'],
-    });
     return res.status(401).json({ error: 'Not logged in.' });
   }
   let userId;

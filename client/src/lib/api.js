@@ -58,12 +58,48 @@ export function fetchHistory(symbol, range = '1mo') {
   );
 }
 
+// The backend also sets an httpOnly session cookie itself on every response
+// below, which is enough on its own for local dev (same-origin) and most
+// browsers in production. But real-device testing found iOS Safari refusing
+// to persist ANY cookie set by api.tradescrim.com via a network response —
+// not just on the redirect back from Google, but even on an immediate
+// same-page fetch() with no navigation involved — almost certainly because
+// that subdomain has never been visited as a first-party top-level page.
+// Writing the cookie via document.cookie here instead is a first-party
+// write on tradescrim.com itself, which sidesteps that restriction entirely
+// regardless of which API endpoint issued the token. Only runs in production
+// (VITE_API_BASE_URL set) — local dev is same-origin and doesn't need it.
+// Trade-off: this cookie can no longer be httpOnly, since JS has to write
+// it — a stored-XSS bug could now read the session token, which couldn't
+// happen before. Kept in addition to (not instead of) the server's own
+// cookie, since the server-set one still works fine in browsers other than
+// Safari and is the more defensible default where it works.
+const SESSION_COOKIE_NAME = 'tradescrim_token'; // must match COOKIE_NAME in server/src/lib/jwt.js
+const SESSION_COOKIE_DOMAIN = '.tradescrim.com';
+const SESSION_COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
+
+function persistSessionCookie(token) {
+  if (!import.meta.env.VITE_API_BASE_URL || !token) return;
+  document.cookie = `${SESSION_COOKIE_NAME}=${token}; Domain=${SESSION_COOKIE_DOMAIN}; Path=/; Max-Age=${SESSION_COOKIE_MAX_AGE}; Secure; SameSite=None`;
+}
+
+function clearSessionCookie() {
+  if (!import.meta.env.VITE_API_BASE_URL) return;
+  document.cookie = `${SESSION_COOKIE_NAME}=; Domain=${SESSION_COOKIE_DOMAIN}; Path=/; Max-Age=0; Secure; SameSite=None`;
+}
+
 export function signup({ username, email, password }) {
-  return postJson(`${BASE}/auth/signup`, { username, email, password }).then((d) => d.user);
+  return postJson(`${BASE}/auth/signup`, { username, email, password }).then((d) => {
+    persistSessionCookie(d.token);
+    return d.user;
+  });
 }
 
 export function login({ username, password }) {
-  return postJson(`${BASE}/auth/login`, { username, password }).then((d) => d.user);
+  return postJson(`${BASE}/auth/login`, { username, password }).then((d) => {
+    persistSessionCookie(d.token);
+    return d.user;
+  });
 }
 
 // Trades a one-time token (from the ?loginToken= the Google callback redirects
@@ -71,11 +107,14 @@ export function login({ username, password }) {
 // in server/src/routes/auth.js for why the session cookie isn't set directly
 // on that redirect.
 export function exchangeGoogleLogin(token) {
-  return postJson(`${BASE}/auth/google/exchange`, { token }).then((d) => d.user);
+  return postJson(`${BASE}/auth/google/exchange`, { token }).then((d) => {
+    persistSessionCookie(d.token);
+    return d.user;
+  });
 }
 
 export function logout() {
-  return postJson(`${BASE}/auth/logout`, {});
+  return postJson(`${BASE}/auth/logout`, {}).finally(clearSessionCookie);
 }
 
 export function fetchCurrentUser() {
@@ -161,7 +200,7 @@ export function updatePassword({ currentPassword, newPassword }) {
 }
 
 export function deleteAccount(confirmUsername) {
-  return postJson(`${BASE}/auth/delete`, { confirmUsername });
+  return postJson(`${BASE}/auth/delete`, { confirmUsername }).finally(clearSessionCookie);
 }
 
 export function fetchFriends() {
