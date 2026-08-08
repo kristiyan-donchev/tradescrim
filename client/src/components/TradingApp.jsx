@@ -14,7 +14,6 @@ import GuestGate from './GuestGate.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
 import { fetchQuote } from '../lib/api.js';
 
-const SEEN_ONBOARDING_KEY = 'tradescrim-seen-onboarding';
 const QUOTE_REFRESH_MS = 20000;
 
 const PAGE_META = {
@@ -68,7 +67,7 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
   const [selectedSymbol, setSelectedSymbol] = useState(null);
   const [quotes, setQuotes] = useState({});
   const [quoteError, setQuoteError] = useState(null);
-  const [showHelp, setShowHelp] = useState(() => !localStorage.getItem(SEEN_ONBOARDING_KEY));
+  const [showHelp, setShowHelp] = useState(false);
 
   const symbolsToTrack = Array.from(
     new Set([...Object.keys(state.holdings), ...(selectedSymbol ? [selectedSymbol] : [])])
@@ -109,7 +108,6 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
   }
 
   function closeHelp() {
-    localStorage.setItem(SEEN_ONBOARDING_KEY, '1');
     setShowHelp(false);
   }
 
