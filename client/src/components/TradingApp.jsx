@@ -92,6 +92,15 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbolsToTrack.join(','), refreshQuotes]);
 
+  // The app is a single-page client-side "router" (no real per-page URLs),
+  // so the tab title otherwise never changes from the static one in
+  // index.html — this at least keeps browser tabs/history/bookmarks
+  // reflecting where the user actually is.
+  useEffect(() => {
+    const meta = PAGE_META[page];
+    document.title = meta ? `${meta.title} — TradeScrim` : 'TradeScrim — Paper Trading Simulator';
+  }, [page]);
+
   function handleSelect(symbol, name) {
     setQuoteError(null);
     setSelectedSymbol(symbol);

@@ -39,7 +39,9 @@ export default function NewsPage() {
         <div className="news-list">
           {news.map((item) => (
             <a className="news-card" key={item.uuid} href={item.link} target="_blank" rel="noopener noreferrer">
-              {item.thumbnailUrl && <img className="news-thumbnail" src={item.thumbnailUrl} alt="" loading="lazy" />}
+              {item.thumbnailUrl && (
+                <img className="news-thumbnail" src={item.thumbnailUrl} alt={item.title} loading="lazy" />
+              )}
               <div className="news-card-body">
                 <h3 className="news-title">{item.title}</h3>
                 <div className="news-meta">
