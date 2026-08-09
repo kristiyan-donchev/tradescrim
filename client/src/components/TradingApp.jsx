@@ -8,6 +8,7 @@ import LearnPage from './LearnPage.jsx';
 import FriendsPage from './FriendsPage.jsx';
 import ChallengesPage from './ChallengesPage.jsx';
 import NewsPage from './NewsPage.jsx';
+import GamesPage from './GamesPage.jsx';
 import AdSlot from './AdSlot.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 import GuestGate from './GuestGate.jsx';
@@ -36,6 +37,10 @@ const PAGE_META = {
   learn: {
     title: 'Learn',
     subtitle: 'Beginner-friendly explanations of how investing and this simulator work.',
+  },
+  games: {
+    title: 'Games',
+    subtitle: 'Quick, playable ways to sharpen your market instincts.',
   },
   friends: {
     title: 'Friends',
@@ -183,6 +188,7 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
               {page === 'leaderboard' && <LeaderboardPage />}
               {page === 'learn' && <LearnPage />}
               {page === 'news' && <NewsPage />}
+              {page === 'games' && <GamesPage guest={guest} onRequestLogin={onRequestLogin} />}
               {guest && GUEST_GATED_PAGES[page] && (
                 <GuestGate onRequestLogin={onRequestLogin} {...GUEST_GATED_PAGES[page]} />
               )}

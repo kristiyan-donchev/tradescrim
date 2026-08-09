@@ -253,6 +253,24 @@ export function completeLesson(lessonId, firstTryPerfect) {
   );
 }
 
+export function fetchChartPair() {
+  return getJson(`${BASE}/games/chart-pair`);
+}
+
+export function fetchBullBearRound() {
+  return getJson(`${BASE}/games/bull-bear-round`);
+}
+
+export function fetchGameResults() {
+  return getJson(`${BASE}/games/results`).then((d) => d.results || []);
+}
+
+export function submitGameResult(gameId, score, meta) {
+  return postJson(`${BASE}/games/${encodeURIComponent(gameId)}/result`, { score, meta }).then(
+    (d) => d.results || []
+  );
+}
+
 export function fetchBugReports() {
   return getJson(`${BASE}/bugs`).then((d) => d.reports || []);
 }

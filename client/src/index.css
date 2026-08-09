@@ -1782,6 +1782,342 @@ input {
   }
 }
 
+/* Games */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+  padding: 18px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease), transform 0.1s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+.game-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.game-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-card-title {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.game-card-desc {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.game-card-best {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--amber);
+}
+
+.game-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+  margin-bottom: 12px;
+  transition: color 0.15s var(--ease);
+}
+
+.game-back-button:hover {
+  color: var(--text);
+}
+
+.game-panel h2 {
+  margin-top: 0;
+}
+
+.game-result {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.game-result-score {
+  font-size: 40px;
+  font-weight: 800;
+  margin: 8px 0;
+}
+
+.game-result-score.positive {
+  color: var(--green);
+}
+
+.game-result-score.negative {
+  color: var(--red);
+}
+
+.game-result-label {
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.game-result-detail {
+  color: var(--muted);
+  margin: 12px 0 20px;
+}
+
+.game-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Market Crash Simulator */
+.crash-status {
+  display: flex;
+  gap: 24px;
+  margin: 16px 0;
+}
+
+.crash-status-label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.crash-status-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.crash-narrative {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.crash-narrative p {
+  margin: 0;
+}
+
+.crash-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crash-log {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.crash-log-item {
+  color: var(--muted);
+}
+
+.crash-log-item .positive,
+.crash-log-item .negative {
+  font-weight: 700;
+}
+
+/* Speed Round / streak-based game header */
+.speed-round-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.speed-round-timer {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.speed-round-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* Guess the Chart */
+.chart-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.chart-pair-option {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease);
+}
+
+.chart-pair-option:hover:not(:disabled) {
+  border-color: var(--primary);
+}
+
+.chart-pair-option:disabled {
+  cursor: default;
+}
+
+.chart-pair-option.correct {
+  border-color: var(--green);
+}
+
+.chart-pair-option.incorrect {
+  border-color: var(--red);
+}
+
+.chart-pair-label {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Build a Portfolio */
+.portfolio-status {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.portfolio-assets {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.portfolio-asset-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.portfolio-asset-row:last-child {
+  border-bottom: none;
+}
+
+.portfolio-asset-name {
+  font-weight: 600;
+  font-size: 14px;
+  display: block;
+}
+
+.portfolio-asset-risk {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.portfolio-asset-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.portfolio-asset-controls .icon-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.portfolio-asset-units {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Bull or Bear */
+.bull-bear-headline {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.bull-bear-headline p {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.bull-option:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.bear-option:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
 /* Sidebar nav badge (unseen triggered alerts) */
 .sidebar-nav-item {
   position: relative;

@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { key: 'dashboard', label: 'Dashboard', icon: 'bar-chart' },
   { key: 'news', label: 'News', icon: 'newspaper' },
   { key: 'learn', label: 'Learn', icon: 'graduation-cap' },
+  { key: 'games', label: 'Games', icon: 'joystick' },
   { key: 'watchlist', label: 'Watchlist', icon: 'eye' },
   { key: 'challenges', label: 'Challenges', icon: 'target' },
   { key: 'friends', label: 'Friends', icon: 'users' },
