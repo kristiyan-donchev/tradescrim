@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Icon } from './icons.jsx';
 
-export default function LessonQuiz({ questions, onAllCorrect }) {
+export default function LessonQuiz({ questions, onAllCorrect, nextLessonTitle, onNextLesson }) {
   const [selected, setSelected] = useState({});
   const [solved, setSolved] = useState({});
   const [missedAny, setMissedAny] = useState(false);
@@ -77,9 +77,16 @@ export default function LessonQuiz({ questions, onAllCorrect }) {
         );
       })}
       {allCorrect && (
-        <p className="quiz-complete">
-          <Icon name="sparkles" size={14} /> Lesson complete — nice work!
-        </p>
+        <div className="quiz-complete-block">
+          <p className="quiz-complete">
+            <Icon name="sparkles" size={14} /> Lesson complete — nice work!
+          </p>
+          {onNextLesson && (
+            <button type="button" className="primary-button" onClick={onNextLesson}>
+              Next lesson: {nextLessonTitle} <Icon name="arrow-right" size={14} />
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

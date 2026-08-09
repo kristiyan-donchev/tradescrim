@@ -135,6 +135,12 @@ const ICON_PATHS = {
       <polyline points="10,6 4,12 10,18" />
     </>
   ),
+  'arrow-right': (
+    <>
+      <line x1="4" y1="12" x2="19" y2="12" />
+      <polyline points="14,6 20,12 14,18" />
+    </>
+  ),
   sparkles: (
     <>
       <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z" />

@@ -41,10 +41,17 @@ export default function LearnPage() {
   }, [isComplete]);
   const progressPercent = Math.round((completedCount / totalLessons) * 100);
 
+  const allLessonsFlat = useMemo(() => LEARN_TOPICS.flatMap((t) => t.lessons), []);
   const activeLesson =
-    activeLessonId === GLOSSARY_LESSON_ID
-      ? null
-      : LEARN_TOPICS.flatMap((t) => t.lessons).find((l) => l.id === activeLessonId);
+    activeLessonId === GLOSSARY_LESSON_ID ? null : allLessonsFlat.find((l) => l.id === activeLessonId);
+
+  // Completing a lesson is exactly what unlocks the rest of its own topic
+  // and (if it was the topic's last lesson) the next topic too, so the
+  // immediately-following lesson in reading order is always safe to jump to
+  // the moment this one is done — no separate lock check needed here.
+  const nextLesson = activeLesson
+    ? allLessonsFlat[allLessonsFlat.findIndex((l) => l.id === activeLesson.id) + 1]
+    : null;
 
   return (
     <>
@@ -164,6 +171,8 @@ export default function LearnPage() {
                 key={activeLesson.id}
                 questions={activeLesson.quiz}
                 onAllCorrect={(firstTryPerfect) => markComplete(activeLesson.id, firstTryPerfect)}
+                nextLessonTitle={nextLesson?.title}
+                onNextLesson={nextLesson ? () => setActiveLessonId(nextLesson.id) : undefined}
               />
             </>
           )}

@@ -1758,10 +1758,24 @@ input {
   color: var(--red);
 }
 
-.quiz-complete {
+.quiz-complete-block {
   margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.quiz-complete {
+  margin: 0;
   font-weight: 600;
   color: var(--green);
+}
+
+.quiz-complete-block .primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 @media (max-width: 760px) {
