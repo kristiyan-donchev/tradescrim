@@ -173,5 +173,34 @@ export async function initSchema() {
       user_agent TEXT,
       created_at BIGINT NOT NULL
     );
+
+    -- One row per lesson a user has ever completed (first completion only —
+    -- re-completing doesn't move completed_at or first_try_perfect). Backs
+    -- the Learn achievements below and lets progress/streaks survive across
+    -- devices, unlike the old localStorage-only tracking. Guests (no
+    -- account) never write here — they keep the localStorage-only behavior
+    -- and don't earn badges, same tradeoff as every other achievement.
+    CREATE TABLE IF NOT EXISTS lesson_completions (
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      lesson_id TEXT NOT NULL,
+      completed_at BIGINT NOT NULL,
+      first_try_perfect BOOLEAN NOT NULL,
+      PRIMARY KEY (user_id, lesson_id)
+    );
+
+    -- Personal-best/history storage for the Games tab. One row per completed
+    -- play of any game; meta holds game-specific extras (e.g. which assets
+    -- were picked) that aren't needed for scoring/leaderboard purposes but
+    -- are handy to keep. Scores are just "bigger is better" ints — each
+    -- game's own scoring function decides what that means for that game.
+    CREATE TABLE IF NOT EXISTS game_results (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      game_id TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      played_at BIGINT NOT NULL,
+      meta JSONB
+    );
+    CREATE INDEX IF NOT EXISTS idx_game_results_user_game ON game_results(user_id, game_id);
   `);
 }

@@ -91,6 +91,8 @@ export async function deleteAccount(userId) {
     await client.query(`DELETE FROM price_alerts WHERE user_id = $1`, [userId]);
     await client.query(`DELETE FROM orders WHERE user_id = $1`, [userId]);
     await client.query(`DELETE FROM achievement_unlocks WHERE user_id = $1`, [userId]);
+    await client.query(`DELETE FROM lesson_completions WHERE user_id = $1`, [userId]);
+    await client.query(`DELETE FROM game_results WHERE user_id = $1`, [userId]);
     await client.query(`DELETE FROM friend_requests WHERE requester_id = $1 OR recipient_id = $1`, [userId]);
     await client.query(`DELETE FROM challenge_participants WHERE user_id = $1`, [userId]);
     await client.query(`UPDATE challenges SET created_by = NULL WHERE created_by = $1`, [userId]);

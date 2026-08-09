@@ -243,6 +243,16 @@ export function fetchChallengeStandings(id) {
   return getJson(`${BASE}/challenges/${id}/standings`);
 }
 
+export function fetchCompletedLessons() {
+  return getJson(`${BASE}/lessons/completed`).then((d) => d.completed || []);
+}
+
+export function completeLesson(lessonId, firstTryPerfect) {
+  return postJson(`${BASE}/lessons/${encodeURIComponent(lessonId)}/complete`, { firstTryPerfect }).then(
+    (d) => d.completed || []
+  );
+}
+
 export function fetchBugReports() {
   return getJson(`${BASE}/bugs`).then((d) => d.reports || []);
 }

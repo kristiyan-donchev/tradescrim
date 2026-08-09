@@ -267,6 +267,22 @@ const ICON_PATHS = {
       <line x1="12" y1="6" x2="12" y2="20" />
     </>
   ),
+  brain: (
+    <>
+      <path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5.5 3 3 0 0 0 3 2.5V4z" />
+      <path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5.5 3 3 0 0 1-3 2.5V4z" />
+    </>
+  ),
+  flame: (
+    <path d="M12 2c1 3-3 4-3 8a3 3 0 0 0 6 0c1 1 1.5 2.5 1.5 4a4.5 4.5 0 0 1-9 0C7.5 9 10 6 12 2z" />
+  ),
+  joystick: (
+    <>
+      <circle cx="12" cy="7" r="4" />
+      <path d="M12 11v6" />
+      <path d="M6 21c0-2.5 2.5-4 6-4s6 1.5 6 4" />
+    </>
+  ),
 };
 
 export function Icon({ name, size = 16, filled = false, className = '', ...rest }) {

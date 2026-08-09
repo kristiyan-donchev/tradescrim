@@ -4,10 +4,12 @@ import { Icon } from './icons.jsx';
 export default function LessonQuiz({ questions, onAllCorrect }) {
   const [selected, setSelected] = useState({});
   const [solved, setSolved] = useState({});
+  const [missedAny, setMissedAny] = useState(false);
 
   useEffect(() => {
     setSelected({});
     setSolved({});
+    setMissedAny(false);
   }, [questions]);
 
   function choose(qIndex, optIndex) {
@@ -15,13 +17,15 @@ export default function LessonQuiz({ questions, onAllCorrect }) {
     setSelected((prev) => ({ ...prev, [qIndex]: optIndex }));
     if (optIndex === questions[qIndex].correctIndex) {
       setSolved((prev) => ({ ...prev, [qIndex]: true }));
+    } else {
+      setMissedAny(true);
     }
   }
 
   const allCorrect = questions.length > 0 && questions.every((_, i) => solved[i]);
 
   useEffect(() => {
-    if (allCorrect) onAllCorrect();
+    if (allCorrect) onAllCorrect(!missedAny);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allCorrect]);
 

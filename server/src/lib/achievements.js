@@ -1,7 +1,26 @@
 import { pool } from '../db.js';
 import { getLeaderboard } from './portfolio.js';
+import { getCompletedLessons } from './lessons.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Must match the total lesson count in client/src/lib/lessons.js (LEARN_TOPICS
+// summed) — there's no shared config between client and server elsewhere in
+// this app either, so this is kept in sync by hand like everything else.
+const TOTAL_LESSONS = 15;
+
+// Earned the moment a run of `threshold` consecutive first-try-perfect
+// lessons is first completed (chronologically) — later imperfect lessons
+// don't un-earn it, same "achieved once, stays" rule as every other
+// achievement here.
+function firstTryStreakEarnedAt(completions, threshold) {
+  let streak = 0;
+  for (const c of completions) {
+    streak = c.firstTryPerfect ? streak + 1 : 0;
+    if (streak >= threshold) return Number(c.completedAt);
+  }
+  return null;
+}
 
 // Tracks how many distinct symbols are held simultaneously as transactions
 // replay in order, returning the timestamp of the transaction that first
@@ -128,6 +147,35 @@ const ACHIEVEMENTS = [
     icon: 'repeat',
     evaluate: (ctx) => ctx.challengeResults[4]?.endsAt ?? null,
   },
+  {
+    id: 'first-lesson',
+    title: 'Curious Mind',
+    description: 'Complete your first Learn lesson.',
+    icon: 'brain',
+    evaluate: (ctx) => Number(ctx.lessonCompletions[0]?.completedAt) || null,
+  },
+  {
+    id: 'lessons-halfway',
+    title: 'Halfway There',
+    description: `Complete ${Math.ceil(TOTAL_LESSONS / 2)} Learn lessons.`,
+    icon: 'star',
+    evaluate: (ctx) => Number(ctx.lessonCompletions[Math.ceil(TOTAL_LESSONS / 2) - 1]?.completedAt) || null,
+  },
+  {
+    id: 'market-scholar',
+    title: 'Market Scholar',
+    description: 'Complete every lesson in Learn.',
+    icon: 'graduation-cap',
+    evaluate: (ctx) =>
+      ctx.lessonCompletions.length >= TOTAL_LESSONS ? Number(ctx.lessonCompletions[TOTAL_LESSONS - 1].completedAt) : null,
+  },
+  {
+    id: 'quiz-streak-5',
+    title: 'On a Roll',
+    description: 'Pass 5 lesson quizzes in a row on your first try.',
+    icon: 'flame',
+    evaluate: (ctx) => firstTryStreakEarnedAt(ctx.lessonCompletions, 5),
+  },
 ];
 
 // Reach #1 unlocks like a trophy — once earned it stays earned even if rank
@@ -151,26 +199,29 @@ async function topOfTheBoardEarnedAt(userId, isRankOneNow) {
 }
 
 export async function getAchievements(userId) {
-  const [transactionsResult, holdingsResult, leaderboard, challengeResultsResult] = await Promise.all([
-    pool.query(
-      `SELECT symbol, type, timestamp, realized_pnl AS "realizedPnL" FROM transactions
-       WHERE user_id = $1 ORDER BY timestamp ASC`,
-      [userId]
-    ),
-    pool.query(`SELECT symbol FROM holdings WHERE user_id = $1`, [userId]),
-    getLeaderboard('all').catch(() => ({ leaderboard: [] })),
-    pool.query(
-      `SELECT cp.badge, c.ends_at AS "endsAt" FROM challenge_participants cp
-       JOIN challenges c ON c.id = cp.challenge_id
-       WHERE cp.user_id = $1 AND cp.badge IS NOT NULL ORDER BY c.ends_at ASC`,
-      [userId]
-    ),
-  ]);
+  const [transactionsResult, holdingsResult, leaderboard, challengeResultsResult, lessonCompletions] =
+    await Promise.all([
+      pool.query(
+        `SELECT symbol, type, timestamp, realized_pnl AS "realizedPnL" FROM transactions
+         WHERE user_id = $1 ORDER BY timestamp ASC`,
+        [userId]
+      ),
+      pool.query(`SELECT symbol FROM holdings WHERE user_id = $1`, [userId]),
+      getLeaderboard('all').catch(() => ({ leaderboard: [] })),
+      pool.query(
+        `SELECT cp.badge, c.ends_at AS "endsAt" FROM challenge_participants cp
+         JOIN challenges c ON c.id = cp.challenge_id
+         WHERE cp.user_id = $1 AND cp.badge IS NOT NULL ORDER BY c.ends_at ASC`,
+        [userId]
+      ),
+      getCompletedLessons(userId),
+    ]);
 
   const ctx = {
     transactions: transactionsResult.rows,
     holdingSymbols: holdingsResult.rows.map((r) => r.symbol),
     challengeResults: challengeResultsResult.rows,
+    lessonCompletions,
   };
   const isRankOneNow = leaderboard.leaderboard.find((e) => e.userId === userId)?.rank === 1;
 

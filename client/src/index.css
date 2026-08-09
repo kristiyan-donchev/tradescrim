@@ -1537,6 +1537,25 @@ input {
   font-size: 15px;
 }
 
+.learn-progress-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.learn-streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--amber);
+  background: var(--amber-soft);
+  border: 1px solid var(--amber-border);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
 .learn-progress-count {
   font-size: 13px;
   color: var(--muted);
@@ -1589,6 +1608,11 @@ input {
   gap: 2px;
 }
 
+.learn-topic-group.locked .learn-topic-title {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
 .learn-lesson-item {
   display: flex;
   align-items: center;
@@ -1607,6 +1631,16 @@ input {
 
 .learn-lesson-item:hover {
   background: var(--panel-bg-hover);
+}
+
+.learn-lesson-item:disabled {
+  color: var(--muted);
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.learn-lesson-item:disabled:hover {
+  background: none;
 }
 
 .learn-lesson-item.active {

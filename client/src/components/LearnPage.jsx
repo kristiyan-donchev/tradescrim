@@ -8,8 +8,22 @@ import { Icon } from './icons.jsx';
 const GLOSSARY_LESSON_ID = 'glossary-reference';
 
 export default function LearnPage() {
-  const { isComplete, markComplete } = useLessonProgress();
+  const { isComplete, markComplete, currentStreak } = useLessonProgress();
   const [activeLessonId, setActiveLessonId] = useState(LEARN_TOPICS[0].lessons[0].id);
+
+  // A topic unlocks once every lesson in the topic before it is complete —
+  // the first topic is always unlocked. Keeps the section feeling like a
+  // course with a beginning and end instead of a flat pile of articles.
+  const topicUnlocked = useMemo(() => {
+    const unlocked = {};
+    let previousTopicDone = true;
+    for (const topic of LEARN_TOPICS) {
+      unlocked[topic.id] = previousTopicDone;
+      previousTopicDone = topic.lessons.every((l) => isComplete(l.id));
+    }
+    return unlocked;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isComplete]);
 
   const totalLessons = useMemo(
     () => LEARN_TOPICS.reduce((sum, topic) => sum + topic.lessons.length, 0) + 1, // +1 for glossary
@@ -37,9 +51,16 @@ export default function LearnPage() {
       <section className="panel learn-progress-panel">
         <div className="learn-progress-header">
           <h2>Your progress</h2>
-          <span className="learn-progress-count">
-            {completedCount} / {totalLessons} lessons complete
-          </span>
+          <div className="learn-progress-stats">
+            {currentStreak >= 2 && (
+              <span className="learn-streak" title="Consecutive lessons passed on the first try">
+                <Icon name="flame" size={14} /> {currentStreak} streak
+              </span>
+            )}
+            <span className="learn-progress-count">
+              {completedCount} / {totalLessons} lessons complete
+            </span>
+          </div>
         </div>
         <div className="learn-progress-bar">
           <div className="learn-progress-fill" style={{ width: `${progressPercent}%` }} />
@@ -48,28 +69,33 @@ export default function LearnPage() {
 
       <div className="learn-layout">
         <nav className="learn-nav">
-          {LEARN_TOPICS.map((topic) => (
-            <div className="learn-topic-group" key={topic.id}>
-              <div className="learn-topic-title">
-                <Icon name={topic.icon} size={16} /> {topic.title}
+          {LEARN_TOPICS.map((topic) => {
+            const unlocked = topicUnlocked[topic.id];
+            return (
+              <div className={unlocked ? 'learn-topic-group' : 'learn-topic-group locked'} key={topic.id}>
+                <div className="learn-topic-title">
+                  <Icon name={unlocked ? topic.icon : 'lock'} size={16} /> {topic.title}
+                </div>
+                <div className="learn-lesson-list">
+                  {topic.lessons.map((lesson) => (
+                    <button
+                      key={lesson.id}
+                      type="button"
+                      disabled={!unlocked}
+                      className={lesson.id === activeLessonId ? 'learn-lesson-item active' : 'learn-lesson-item'}
+                      onClick={() => setActiveLessonId(lesson.id)}
+                      title={unlocked ? undefined : 'Complete the previous topic to unlock this one'}
+                    >
+                      <span className="learn-lesson-check">
+                        {isComplete(lesson.id) ? <Icon name="check" size={14} /> : ''}
+                      </span>
+                      {lesson.title}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="learn-lesson-list">
-                {topic.lessons.map((lesson) => (
-                  <button
-                    key={lesson.id}
-                    type="button"
-                    className={lesson.id === activeLessonId ? 'learn-lesson-item active' : 'learn-lesson-item'}
-                    onClick={() => setActiveLessonId(lesson.id)}
-                  >
-                    <span className="learn-lesson-check">
-                      {isComplete(lesson.id) ? <Icon name="check" size={14} /> : ''}
-                    </span>
-                    {lesson.title}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           <div className="learn-topic-group">
             <div className="learn-topic-title">
@@ -137,7 +163,7 @@ export default function LearnPage() {
               <LessonQuiz
                 key={activeLesson.id}
                 questions={activeLesson.quiz}
-                onAllCorrect={() => markComplete(activeLesson.id)}
+                onAllCorrect={(firstTryPerfect) => markComplete(activeLesson.id, firstTryPerfect)}
               />
             </>
           )}
