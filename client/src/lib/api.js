@@ -265,6 +265,12 @@ export function fetchGameResults() {
   return getJson(`${BASE}/games/results`).then((d) => d.results || []);
 }
 
+export function fetchGamesLeaderboard(gameId, scope = 'global') {
+  return getJson(`${BASE}/games/leaderboard?gameId=${encodeURIComponent(gameId)}&scope=${scope}`).then(
+    (d) => d.leaderboard || []
+  );
+}
+
 export function submitGameResult(gameId, score, meta) {
   return postJson(`${BASE}/games/${encodeURIComponent(gameId)}/result`, { score, meta }).then(
     (d) => d.results || []

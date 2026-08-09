@@ -20,6 +20,25 @@ export async function getPersonalBests(userId) {
   return result.rows.map((r) => ({ gameId: r.gameId, bestScore: Number(r.bestScore), plays: Number(r.plays) }));
 }
 
+// Ranked by each player's own best score for the one game requested — an
+// inner join, so only people who've actually played that specific game show
+// up (a leaderboard row of "never played" would just be clutter). `userIds`,
+// when passed, scopes the board to that set of users (friends-only view),
+// same pattern as the portfolio leaderboards.
+export async function getGamesLeaderboard(gameId, { userIds } = {}) {
+  const result = await pool.query(
+    `SELECT u.id AS "userId", u.username, MAX(g.score) AS "bestScore"
+     FROM game_results g
+     JOIN users u ON u.id = g.user_id
+     WHERE g.game_id = $1 AND ($2::int[] IS NULL OR u.id = ANY($2::int[]))
+     GROUP BY u.id, u.username
+     ORDER BY "bestScore" DESC, u.id ASC`,
+    [gameId, userIds ?? null]
+  );
+  const leaderboard = result.rows.map((row, i) => ({ ...row, bestScore: Number(row.bestScore), rank: i + 1 }));
+  return { gameId, leaderboard: leaderboard.slice(0, 100) };
+}
+
 // A deliberately small, liquid, well-known pool — keeps "Guess the Chart"
 // fair (no obscure penny stocks with erratic single-trade price jumps) and
 // keeps the odds of Yahoo returning bad/missing data for a pick low.
