@@ -261,6 +261,10 @@ export function fetchBullBearRound() {
   return getJson(`${BASE}/games/bull-bear-round`);
 }
 
+export function fetchCandlestickRound() {
+  return getJson(`${BASE}/games/candlestick-round`);
+}
+
 export function fetchGameResults() {
   return getJson(`${BASE}/games/results`).then((d) => d.results || []);
 }

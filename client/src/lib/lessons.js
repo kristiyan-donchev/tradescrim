@@ -179,6 +179,49 @@ export const LEARN_TOPICS = [
           },
         ],
       },
+      {
+        id: 'chart-types',
+        title: 'Chart types: line, candlestick, and volume',
+        summary: 'What each style of chart shows that the others don\'t.',
+        sections: [
+          {
+            heading: 'Line charts: the simple trend',
+            body: "The line chart used elsewhere in this app connects each period's closing price into a single line. It's the easiest to read at a glance — good for spotting the overall trend — but it throws away everything that happened between opens and closes, like how far the price swung during the day.",
+          },
+          {
+            heading: 'Candlestick charts: a full period in one shape',
+            body: "A candlestick packs four prices into one shape for a single period (a day, an hour, whatever the timeframe is): the open, close, high, and low. The thick part (the \"body\") spans open to close — traditionally green/white if the close was higher than the open, red/black if lower. The thin lines above and below (the \"wicks\" or \"shadows\") mark the highest and lowest prices reached during that period, even if the price didn't finish there. A long wick means the price was pushed hard in that direction and then reversed before the period ended.",
+          },
+          {
+            heading: 'Volume charts: how much conviction was behind the move',
+            body: "Volume bars, usually shown beneath the price, count how many shares traded during each period. Price tells you what happened; volume tells you how much participation was behind it. A big price move on heavy volume suggests broad agreement and is more likely to hold. The same move on thin volume — few shares changing hands — is easier to reverse.",
+          },
+        ],
+        quiz: [
+          {
+            question: 'On a candlestick, what do the thin "wick" lines above and below the body show?',
+            options: [
+              'The opening and closing prices',
+              'The highest and lowest prices reached during that period',
+              'The trading volume',
+              'The average price over the period',
+            ],
+            correctIndex: 1,
+            explanation: 'The body spans open-to-close; the wicks mark the high and low the price touched during the period, even briefly.',
+          },
+          {
+            question: 'A big price move on unusually heavy trading volume usually suggests what?',
+            options: [
+              'The move is fake and will definitely reverse',
+              'Broad participation and conviction behind the move, making it more likely to hold',
+              'The stock has been delisted',
+              'Volume has no relationship to price moves',
+            ],
+            correctIndex: 1,
+            explanation: 'Heavy volume behind a move means a lot of traders agreed with the direction, which tends to make the move more durable than the same move on thin volume.',
+          },
+        ],
+      },
     ],
   },
   {

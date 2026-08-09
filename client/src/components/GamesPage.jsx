@@ -8,6 +8,10 @@ import SpeedRoundGame from './SpeedRoundGame.jsx';
 import GuessTheChartGame from './GuessTheChartGame.jsx';
 import BuildPortfolioGame from './BuildPortfolioGame.jsx';
 import BullBearGame from './BullBearGame.jsx';
+import TickerMatchGame from './TickerMatchGame.jsx';
+import BuyTheDipGame from './BuyTheDipGame.jsx';
+import InvestorQuizGame from './InvestorQuizGame.jsx';
+import CandlestickGame from './CandlestickGame.jsx';
 
 const GAME_COMPONENTS = {
   'market-crash': MarketCrashGame,
@@ -15,6 +19,10 @@ const GAME_COMPONENTS = {
   'guess-the-chart': GuessTheChartGame,
   'build-a-portfolio': BuildPortfolioGame,
   'bull-or-bear': BullBearGame,
+  'ticker-match': TickerMatchGame,
+  'buy-the-dip': BuyTheDipGame,
+  'investor-quiz': InvestorQuizGame,
+  'candlestick-pattern': CandlestickGame,
 };
 
 export default function GamesPage({ guest, onRequestLogin }) {

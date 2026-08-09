@@ -289,6 +289,19 @@ const ICON_PATHS = {
       <path d="M6 21c0-2.5 2.5-4 6-4s6 1.5 6 4" />
     </>
   ),
+  candlestick: (
+    <>
+      <line x1="6" y1="3" x2="6" y2="9" />
+      <rect x="4" y="9" width="4" height="7" />
+      <line x1="6" y1="16" x2="6" y2="21" />
+      <line x1="14" y1="6" x2="14" y2="11" />
+      <rect x="12" y="11" width="4" height="5" />
+      <line x1="14" y1="16" x2="14" y2="21" />
+      <line x1="20" y1="2" x2="20" y2="8" />
+      <rect x="18" y="8" width="4" height="9" />
+      <line x1="20" y1="17" x2="20" y2="22" />
+    </>
+  ),
 };
 
 export function Icon({ name, size = 16, filled = false, className = '', ...rest }) {

@@ -124,6 +124,43 @@ export async function getBullBearRound() {
   throw new Error('Could not find a suitable headline right now.');
 }
 
+async function fetchDailyOHLC(symbol, days) {
+  const period2 = new Date();
+  const period1 = new Date(period2.getTime() - days * DAY_MS);
+  const chart = await yahooFinance.chart(symbol, { period1, period2, interval: '1d' });
+  return (chart.quotes || [])
+    .filter((q) => q.open != null && q.high != null && q.low != null && q.close != null)
+    .map((q) => ({ date: q.date, open: q.open, high: q.high, low: q.low, close: q.close }));
+}
+
+const SHOWN_CANDLES = 28;
+const FUTURE_CANDLES = 5;
+
+// A real recent candlestick chart with the most recent few days held back —
+// guess whether the price went up or down over those hidden days. Always
+// anchored to "now" (not tied to a specific news event like Bull or Bear),
+// so there's no same-day-data problem to work around.
+export async function getCandlestickRound() {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const symbol = CHART_POOL[Math.floor(Math.random() * CHART_POOL.length)];
+    try {
+      const all = await fetchDailyOHLC(symbol, 70);
+      if (all.length < SHOWN_CANDLES + FUTURE_CANDLES) continue;
+
+      const candles = all.slice(all.length - (SHOWN_CANDLES + FUTURE_CANDLES), all.length - FUTURE_CANDLES);
+      const future = all.slice(all.length - FUTURE_CANDLES);
+      const lastShownClose = candles[candles.length - 1].close;
+      const futureClose = future[future.length - 1].close;
+      const changePercent = ((futureClose - lastShownClose) / lastShownClose) * 100;
+
+      return { symbol, candles, direction: changePercent >= 0 ? 'up' : 'down', changePercent };
+    } catch {
+      // try another symbol
+    }
+  }
+  throw new Error('Could not load a candlestick chart right now.');
+}
+
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));

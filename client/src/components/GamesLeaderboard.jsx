@@ -3,15 +3,19 @@ import { fetchGamesLeaderboard } from '../lib/api.js';
 import { GAMES_META } from '../lib/games.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
+// Games without a numeric score (e.g. the Investor Personality Quiz, which
+// produces a "type" instead) don't have a leaderboard to show.
+const RANKABLE_GAMES = GAMES_META.filter((g) => g.hasLeaderboard !== false);
+
 export default function GamesLeaderboard() {
   const { user } = useAuth();
-  const [gameId, setGameId] = useState(GAMES_META[0].id);
+  const [gameId, setGameId] = useState(RANKABLE_GAMES[0].id);
   const [scope, setScope] = useState('global');
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const game = GAMES_META.find((g) => g.id === gameId);
+  const game = RANKABLE_GAMES.find((g) => g.id === gameId);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,7 +39,7 @@ export default function GamesLeaderboard() {
   return (
     <div className="leaderboard">
       <div className="range-tabs">
-        {GAMES_META.map((g) => (
+        {RANKABLE_GAMES.map((g) => (
           <button
             key={g.id}
             type="button"

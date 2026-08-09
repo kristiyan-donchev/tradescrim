@@ -5,13 +5,23 @@ import {
   getPersonalBests,
   getChartPair,
   getBullBearRound,
+  getCandlestickRound,
   getGamesLeaderboard,
 } from '../lib/games.js';
 import { getFriendIds } from '../lib/friends.js';
 
 const router = Router();
 
-const VALID_GAME_IDS = ['market-crash', 'speed-round', 'guess-the-chart', 'build-a-portfolio', 'bull-or-bear'];
+const VALID_GAME_IDS = [
+  'market-crash',
+  'speed-round',
+  'guess-the-chart',
+  'build-a-portfolio',
+  'bull-or-bear',
+  'ticker-match',
+  'buy-the-dip',
+  'candlestick-pattern',
+];
 
 // Games themselves are playable by guests (same "browse freely, log in to
 // save progress" pattern as the rest of the app) — only score-saving and
@@ -31,6 +41,15 @@ router.get('/bull-bear-round', async (_req, res) => {
   } catch (err) {
     console.error('bull-bear-round error', err.message);
     res.status(502).json({ error: 'Could not load a headline right now.' });
+  }
+});
+
+router.get('/candlestick-round', async (_req, res) => {
+  try {
+    res.json(await getCandlestickRound());
+  } catch (err) {
+    console.error('candlestick-round error', err.message);
+    res.status(502).json({ error: 'Could not load a candlestick chart right now.' });
   }
 });
 
