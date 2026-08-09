@@ -6,9 +6,9 @@ import { yahooFinance } from './yahoo.js';
 // built from), rather than news scoped to one ticker.
 const MARKET_NEWS_QUERY = 'stock market';
 
-export async function getMarketNews(count = 20) {
+export async function getMarketNews(count = 100) {
   const result = await yahooFinance.search(MARKET_NEWS_QUERY, { newsCount: count, quotesCount: 0 });
-  return (result.news || []).map((item) => ({
+  const items = (result.news || []).map((item) => ({
     uuid: item.uuid,
     title: item.title,
     publisher: item.publisher,
@@ -17,4 +17,8 @@ export async function getMarketNews(count = 20) {
     thumbnailUrl: item.thumbnail?.resolutions?.[0]?.url ?? null,
     relatedTickers: item.relatedTickers || [],
   }));
+  // Yahoo's search endpoint doesn't guarantee recency order, so sort explicitly
+  // (undated items sink to the bottom rather than interrupting the timeline).
+  items.sort((a, b) => (b.publishedAt ?? -Infinity) - (a.publishedAt ?? -Infinity));
+  return items;
 }
