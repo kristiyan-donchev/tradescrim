@@ -173,6 +173,7 @@ export default function LearnPage() {
                 onAllCorrect={(firstTryPerfect) => markComplete(activeLesson.id, firstTryPerfect)}
                 nextLessonTitle={nextLesson?.title}
                 onNextLesson={nextLesson ? () => setActiveLessonId(nextLesson.id) : undefined}
+                alreadyComplete={isComplete(activeLesson.id)}
               />
             </>
           )}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Icon } from './icons.jsx';
 
-export default function LessonQuiz({ questions, onAllCorrect, nextLessonTitle, onNextLesson }) {
+export default function LessonQuiz({ questions, onAllCorrect, nextLessonTitle, onNextLesson, alreadyComplete }) {
   const [selected, setSelected] = useState({});
   const [solved, setSolved] = useState({});
   const [missedAny, setMissedAny] = useState(false);
@@ -23,6 +23,7 @@ export default function LessonQuiz({ questions, onAllCorrect, nextLessonTitle, o
   }
 
   const allCorrect = questions.length > 0 && questions.every((_, i) => solved[i]);
+  const showComplete = allCorrect || alreadyComplete;
 
   useEffect(() => {
     if (allCorrect) onAllCorrect(!missedAny);
@@ -76,7 +77,7 @@ export default function LessonQuiz({ questions, onAllCorrect, nextLessonTitle, o
           </div>
         );
       })}
-      {allCorrect && (
+      {showComplete && (
         <div className="quiz-complete-block">
           <p className="quiz-complete">
             <Icon name="sparkles" size={14} /> Lesson complete — nice work!
