@@ -7,7 +7,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // Must match the total lesson count in client/src/lib/lessons.js (LEARN_TOPICS
 // summed) — there's no shared config between client and server elsewhere in
 // this app either, so this is kept in sync by hand like everything else.
-const TOTAL_LESSONS = 16;
+const TOTAL_LESSONS = 20;
 
 // Earned the moment a run of `threshold` consecutive first-try-perfect
 // lessons is first completed (chronologically) — later imperfect lessons

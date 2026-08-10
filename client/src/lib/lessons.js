@@ -716,4 +716,183 @@ export const LEARN_TOPICS = [
       },
     ],
   },
+  {
+    id: 'types-of-investments',
+    title: 'Types of Investments',
+    icon: 'coins',
+    lessons: [
+      {
+        id: 'types-of-stocks',
+        title: 'Types of stocks',
+        summary: 'Growth vs. value, dividend payers, and company size.',
+        sections: [
+          {
+            heading: 'Growth vs. value',
+            body: "Growth stocks belong to companies reinvesting most of their profit back into expanding fast — often young tech companies — which usually means a high price relative to current earnings and little or no dividend. Value stocks trade cheaply relative to their earnings or assets, often because they're more mature, slower-growing businesses the market has priced conservatively. Neither is automatically better; they're different bets on where the return comes from.",
+          },
+          {
+            heading: 'Dividend stocks',
+            body: "Some companies pay out a slice of their profit directly to shareholders on a regular schedule — a dividend — instead of reinvesting all of it. That turns part of your return into cash income you receive just for holding the stock, on top of whatever the price does. Dividend yield (annual dividend ÷ price) is the usual way to compare how much income a stock pays relative to its cost.",
+          },
+          {
+            heading: 'Company size',
+            body: "Market capitalization (share price × shares outstanding) sorts companies into large-cap (established, generally more stable), mid-cap, and small-cap (younger, more room to grow but usually more volatile). Penny stocks sit at the extreme small end — very low share prices, often thinly traded, and considered especially speculative and risky.",
+          },
+        ],
+        quiz: [
+          {
+            question: 'What best describes a growth stock?',
+            options: [
+              'Pays a large, steady dividend and rarely changes price',
+              'Reinvests profits to expand quickly, often with a high valuation and little or no dividend',
+              'Always the safest choice available',
+              'A stock only institutions are allowed to buy',
+            ],
+            correctIndex: 1,
+            explanation: 'Growth companies plow profit back into expansion rather than paying it out, betting on future earnings over current income.',
+          },
+          {
+            question: 'What does market capitalization describe?',
+            options: [
+              "A company's total number of employees",
+              "A company's overall size, based on share price times shares outstanding",
+              "A company's annual revenue only",
+              "The interest rate on a company's bonds",
+            ],
+            correctIndex: 1,
+            explanation: "Market cap is the market's total valuation of a company's equity — price per share times total shares.",
+          },
+        ],
+      },
+      {
+        id: 'funds-and-etfs',
+        title: 'Funds: mutual funds, index funds & ETFs',
+        summary: 'How pooling money into a fund spreads risk automatically.',
+        sections: [
+          {
+            heading: 'What a fund is',
+            body: "A fund pools money from many investors to buy a whole basket of stocks, bonds, or other assets at once. Buying a single share of the fund gives you a small slice of everything it holds — instant diversification without having to research and buy each underlying company yourself.",
+          },
+          {
+            heading: 'Mutual funds vs. index funds',
+            body: 'A mutual fund can be "actively managed" — a manager picks holdings and trades them, trying to beat the market, usually for a higher annual fee (the "expense ratio"). An index fund instead just tries to mirror a benchmark, like the S&P 500, by holding roughly what that index holds — a passive approach that typically charges a much lower expense ratio.',
+          },
+          {
+            heading: 'ETFs',
+            body: "An exchange-traded fund (ETF) is structured like an index or mutual fund — a basket of underlying holdings — but trades all day on an exchange with a live, changing price, just like a stock. A traditional mutual fund, by contrast, is only priced once, after the market closes.",
+          },
+        ],
+        quiz: [
+          {
+            question: 'What is the main benefit of buying a fund instead of individual stocks?',
+            options: [
+              'It guarantees a profit',
+              'Instant diversification across many holdings in a single purchase',
+              'It removes all risk of losing money',
+              "It's the only legal way to buy stocks",
+            ],
+            correctIndex: 1,
+            explanation: 'One fund share gives you exposure to everything the fund holds, spreading risk across many positions at once.',
+          },
+          {
+            question: 'What is the key structural difference between an ETF and a traditional mutual fund?',
+            options: [
+              'ETFs can only hold bonds',
+              'An ETF trades throughout the day on an exchange like a stock, while a mutual fund is priced once at the end of the day',
+              'Mutual funds never charge any fees',
+              'ETFs are riskier by definition',
+            ],
+            correctIndex: 1,
+            explanation: 'ETFs get a live, continuously updated price from exchange trading; mutual funds settle to a single price after the close.',
+          },
+        ],
+      },
+      {
+        id: 'bonds',
+        title: 'Bonds',
+        summary: "Lending money for a fixed return, instead of owning a piece of a company.",
+        sections: [
+          {
+            heading: 'What a bond is',
+            body: "Buying a stock makes you a part-owner of a company. Buying a bond makes you a lender — to a government or a company — in exchange for regular interest payments and a promise to get your original amount (the principal) back on a set maturity date. A bond is essentially an IOU with a schedule attached.",
+          },
+          {
+            heading: 'Government vs. corporate bonds',
+            body: "Government bonds (like U.S. Treasuries) are generally considered very low risk, since they're backed by the government's ability to tax and print currency. Corporate bonds pay a higher interest rate to compensate for the extra risk that a company might struggle to repay — reflected in a credit rating that scores how likely that is.",
+          },
+          {
+            heading: 'Why bonds behave differently from stocks',
+            body: "Bond prices tend to move opposite to interest rates — when rates rise, existing bonds paying the old, lower rate become less attractive, so their price falls. Bonds are also usually less volatile day to day than stocks, which is why many portfolios mix in bonds to smooth out swings rather than to chase the highest possible return.",
+          },
+        ],
+        quiz: [
+          {
+            question: 'When you buy a bond, what are you actually doing?',
+            options: [
+              'Buying part ownership of a company',
+              'Lending money to a government or company in exchange for interest payments',
+              "Guaranteeing that company's future profits",
+              "Receiving a share of a company's dividends",
+            ],
+            correctIndex: 1,
+            explanation: 'A bond is a loan you make to the issuer, repaid with interest — not an ownership stake.',
+          },
+          {
+            question: 'Why do corporate bonds typically pay a higher interest rate than government bonds?',
+            options: [
+              'Corporate bonds are simply more popular to trade',
+              'To compensate investors for the extra risk that a company might not repay',
+              'Governments are not legally allowed to borrow money',
+              'There is no real difference between the two',
+            ],
+            correctIndex: 1,
+            explanation: 'Higher perceived default risk gets priced in as a higher interest rate — the reward for taking on more uncertainty.',
+          },
+        ],
+      },
+      {
+        id: 'other-asset-classes',
+        title: 'Other investments: REITs, commodities & crypto',
+        summary: 'A quick tour past stocks, funds, and bonds.',
+        sections: [
+          {
+            heading: 'REITs',
+            body: "A Real Estate Investment Trust (REIT) lets you invest in income-producing real estate — apartment buildings, malls, warehouses — by buying a stock-like share, without buying and managing property yourself. By law, REITs must pay out most of their income as dividends, which is why they're often used specifically for income.",
+          },
+          {
+            heading: 'Commodities',
+            body: "Commodities are raw physical goods — gold, oil, wheat, and the like. Most investors get exposure through specialized funds or ETFs rather than holding the physical good directly. Gold in particular is commonly used as a hedge during inflation or market stress, since it doesn't always move in the same direction as stocks or bonds.",
+          },
+          {
+            heading: 'Cryptocurrency',
+            body: "Digital assets like Bitcoin trade continuously and independently of any company's earnings, pay no dividends or interest, and are typically far more volatile than stocks or bonds. Worth understanding as its own distinct, higher-risk category — not a substitute for the core of a diversified portfolio.",
+          },
+        ],
+        quiz: [
+          {
+            question: 'What is a REIT?',
+            options: [
+              'A type of government bond',
+              'A way to invest in real estate through a stock-like share, without buying property yourself',
+              'A cryptocurrency',
+              'A fixed-rate savings account',
+            ],
+            correctIndex: 1,
+            explanation: 'REITs package real estate ownership into a tradable share and are required to pass most of their income through as dividends.',
+          },
+          {
+            question: 'Which of these is generally true about cryptocurrency compared to stocks and bonds?',
+            options: [
+              'It pays a fixed dividend',
+              "It's usually far more volatile and doesn't pay interest or dividends",
+              'It is backed by a government',
+              'It behaves identically to a government bond',
+            ],
+            correctIndex: 1,
+            explanation: 'Crypto has no earnings, interest, or dividends underlying its price, and tends to swing much more than traditional assets.',
+          },
+        ],
+      },
+    ],
+  },
 ];
