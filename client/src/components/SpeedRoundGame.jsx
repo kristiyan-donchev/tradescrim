@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import GameShell from './GameShell.jsx';
 import { LEARN_TOPICS } from '../lib/lessons.js';
+import { SPEED_ROUND_EXTRA_QUESTIONS } from '../lib/speedRoundQuestions.js';
 import { submitGameResult } from '../lib/api.js';
 
 const ROUND_SECONDS = 60;
@@ -15,7 +16,10 @@ function shuffle(arr) {
 }
 
 export default function SpeedRoundGame({ guest, onExit, onScoreSaved }) {
-  const pool = useMemo(() => shuffle(LEARN_TOPICS.flatMap((t) => t.lessons).flatMap((l) => l.quiz)), []);
+  const pool = useMemo(
+    () => shuffle([...LEARN_TOPICS.flatMap((t) => t.lessons).flatMap((l) => l.quiz), ...SPEED_ROUND_EXTRA_QUESTIONS]),
+    []
+  );
   const [started, setStarted] = useState(false);
   const [done, setDone] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(ROUND_SECONDS);
