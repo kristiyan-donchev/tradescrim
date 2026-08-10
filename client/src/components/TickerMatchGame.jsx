@@ -4,19 +4,59 @@ import { Icon } from './icons.jsx';
 import { submitGameResult } from '../lib/api.js';
 
 // Well-known companies only — the point is recognizing the pairing, not
-// obscure ticker trivia.
+// obscure ticker trivia. The pool is much bigger than a single round needs
+// so that which companies show up (not just their card positions) changes
+// from one playthrough to the next.
 const COMPANIES = [
   { ticker: 'AAPL', name: 'Apple' },
   { ticker: 'MSFT', name: 'Microsoft' },
   { ticker: 'AMZN', name: 'Amazon' },
   { ticker: 'GOOGL', name: 'Alphabet (Google)' },
+  { ticker: 'META', name: 'Meta' },
   { ticker: 'TSLA', name: 'Tesla' },
   { ticker: 'NFLX', name: 'Netflix' },
   { ticker: 'NVDA', name: 'NVIDIA' },
-  { ticker: 'DIS', name: 'Disney' },
-  { ticker: 'KO', name: 'Coca-Cola' },
+  { ticker: 'ORCL', name: 'Oracle' },
+  { ticker: 'ADBE', name: 'Adobe' },
+  { ticker: 'CRM', name: 'Salesforce' },
+  { ticker: 'INTC', name: 'Intel' },
+  { ticker: 'AMD', name: 'AMD' },
+  { ticker: 'IBM', name: 'IBM' },
+  { ticker: 'CSCO', name: 'Cisco' },
+  { ticker: 'QCOM', name: 'Qualcomm' },
+  { ticker: 'PYPL', name: 'PayPal' },
+  { ticker: 'WMT', name: 'Walmart' },
+  { ticker: 'TGT', name: 'Target' },
+  { ticker: 'COST', name: 'Costco' },
+  { ticker: 'HD', name: 'Home Depot' },
   { ticker: 'NKE', name: 'Nike' },
+  { ticker: 'SBUX', name: 'Starbucks' },
+  { ticker: 'MCD', name: "McDonald's" },
+  { ticker: 'KO', name: 'Coca-Cola' },
+  { ticker: 'PEP', name: 'PepsiCo' },
+  { ticker: 'DIS', name: 'Disney' },
+  { ticker: 'CMCSA', name: 'Comcast' },
+  { ticker: 'F', name: 'Ford' },
+  { ticker: 'GM', name: 'General Motors' },
+  { ticker: 'JPM', name: 'JPMorgan Chase' },
+  { ticker: 'BAC', name: 'Bank of America' },
+  { ticker: 'V', name: 'Visa' },
+  { ticker: 'MA', name: 'Mastercard' },
+  { ticker: 'GS', name: 'Goldman Sachs' },
+  { ticker: 'JNJ', name: 'Johnson & Johnson' },
+  { ticker: 'PFE', name: 'Pfizer' },
+  { ticker: 'UNH', name: 'UnitedHealth Group' },
+  { ticker: 'DAL', name: 'Delta Air Lines' },
+  { ticker: 'UAL', name: 'United Airlines' },
+  { ticker: 'XOM', name: 'ExxonMobil' },
+  { ticker: 'CVX', name: 'Chevron' },
+  { ticker: 'T', name: 'AT&T' },
+  { ticker: 'VZ', name: 'Verizon' },
 ];
+
+// One round shows this many pairs — matches the 5-column grid (20 cards).
+// The companies used are freshly sampled from the full pool each round.
+const ROUND_SIZE = 10;
 
 function shuffle(arr) {
   const copy = [...arr];
@@ -28,7 +68,8 @@ function shuffle(arr) {
 }
 
 function buildDeck() {
-  const cards = COMPANIES.flatMap((c, pairId) => [
+  const roundCompanies = shuffle(COMPANIES).slice(0, ROUND_SIZE);
+  const cards = roundCompanies.flatMap((c, pairId) => [
     { id: `${pairId}-ticker`, pairId, label: c.ticker },
     { id: `${pairId}-name`, pairId, label: c.name },
   ]);
@@ -53,7 +94,7 @@ export default function TickerMatchGame({ guest, onExit, onScoreSaved }) {
   }, [startTime, done]);
 
   const score = useMemo(() => {
-    const extraFlips = Math.max(0, flipCount - COMPANIES.length * 2);
+    const extraFlips = Math.max(0, flipCount - ROUND_SIZE * 2);
     return Math.max(0, 500 - extraFlips * 10 - elapsed * 3);
   }, [flipCount, elapsed]);
 
@@ -73,7 +114,7 @@ export default function TickerMatchGame({ guest, onExit, onScoreSaved }) {
           setMatchedPairIds((prev) => {
             const nextSet = new Set(prev);
             nextSet.add(first.pairId);
-            if (nextSet.size === COMPANIES.length) finish();
+            if (nextSet.size === ROUND_SIZE) finish();
             return nextSet;
           });
           setFlipped([]);
@@ -123,7 +164,7 @@ export default function TickerMatchGame({ guest, onExit, onScoreSaved }) {
           <div className="game-result-label">Score</div>
           <div className="game-result-score positive">{score}</div>
           <p className="game-result-detail">
-            Matched all {COMPANIES.length} pairs in {flipCount} flips, {elapsed}s.
+            Matched all {ROUND_SIZE} pairs in {flipCount} flips, {elapsed}s.
           </p>
           <div className="game-actions">
             <button type="button" className="primary-button" onClick={playAgain}>
