@@ -29,7 +29,7 @@ function emptyAllocation() {
 }
 
 export default function BuildPortfolioGame({ guest, onExit, onScoreSaved }) {
-  const [target] = useState(randomTarget);
+  const [target, setTarget] = useState(randomTarget);
   const [allocation, setAllocation] = useState(emptyAllocation);
   const [done, setDone] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -77,9 +77,9 @@ export default function BuildPortfolioGame({ guest, onExit, onScoreSaved }) {
   }
 
   function playAgain() {
+    setTarget(randomTarget());
     setAllocation(emptyAllocation());
     setDone(false);
-    onExit();
   }
 
   if (done) {
