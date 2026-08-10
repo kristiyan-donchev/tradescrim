@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import GameShell from './GameShell.jsx';
 import { LEARN_TOPICS } from '../lib/lessons.js';
 import { SPEED_ROUND_EXTRA_QUESTIONS } from '../lib/speedRoundQuestions.js';
@@ -15,11 +15,15 @@ function shuffle(arr) {
   return copy;
 }
 
+// Re-shuffled fresh each round (on mount and again on Play again) so a
+// player who replays without leaving the game doesn't see the exact same
+// question order repeat.
+function buildPool() {
+  return shuffle([...LEARN_TOPICS.flatMap((t) => t.lessons).flatMap((l) => l.quiz), ...SPEED_ROUND_EXTRA_QUESTIONS]);
+}
+
 export default function SpeedRoundGame({ guest, onExit, onScoreSaved }) {
-  const pool = useMemo(
-    () => shuffle([...LEARN_TOPICS.flatMap((t) => t.lessons).flatMap((l) => l.quiz), ...SPEED_ROUND_EXTRA_QUESTIONS]),
-    []
-  );
+  const [pool, setPool] = useState(buildPool);
   const [started, setStarted] = useState(false);
   const [done, setDone] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(ROUND_SECONDS);
@@ -65,6 +69,7 @@ export default function SpeedRoundGame({ guest, onExit, onScoreSaved }) {
   }
 
   function playAgain() {
+    setPool(buildPool());
     setStarted(false);
     setDone(false);
     setSecondsLeft(ROUND_SECONDS);
