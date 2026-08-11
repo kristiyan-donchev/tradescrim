@@ -1,28 +1,23 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Icon } from './icons.jsx';
 import { fetchGameResults } from '../lib/api.js';
 import { GAMES_META } from '../lib/games.js';
 import GamesLeaderboard from './GamesLeaderboard.jsx';
-import MarketCrashGame from './MarketCrashGame.jsx';
-import SpeedRoundGame from './SpeedRoundGame.jsx';
-import GuessTheChartGame from './GuessTheChartGame.jsx';
-import BuildPortfolioGame from './BuildPortfolioGame.jsx';
-import BullBearGame from './BullBearGame.jsx';
-import TickerMatchGame from './TickerMatchGame.jsx';
-import BuyTheDipGame from './BuyTheDipGame.jsx';
-import InvestorQuizGame from './InvestorQuizGame.jsx';
-import CandlestickGame from './CandlestickGame.jsx';
 
+// Lazy-loaded so picking one game doesn't pull in the other eight — most of
+// these are only ever touched by a player who opens that specific card, and
+// several pull in recharts-adjacent chart logic that's otherwise dead weight
+// in the main bundle for anyone who never visits Games at all.
 const GAME_COMPONENTS = {
-  'market-crash': MarketCrashGame,
-  'speed-round': SpeedRoundGame,
-  'guess-the-chart': GuessTheChartGame,
-  'build-a-portfolio': BuildPortfolioGame,
-  'bull-or-bear': BullBearGame,
-  'ticker-match': TickerMatchGame,
-  'buy-the-dip': BuyTheDipGame,
-  'investor-quiz': InvestorQuizGame,
-  'candlestick-pattern': CandlestickGame,
+  'market-crash': lazy(() => import('./MarketCrashGame.jsx')),
+  'speed-round': lazy(() => import('./SpeedRoundGame.jsx')),
+  'guess-the-chart': lazy(() => import('./GuessTheChartGame.jsx')),
+  'build-a-portfolio': lazy(() => import('./BuildPortfolioGame.jsx')),
+  'bull-or-bear': lazy(() => import('./BullBearGame.jsx')),
+  'ticker-match': lazy(() => import('./TickerMatchGame.jsx')),
+  'buy-the-dip': lazy(() => import('./BuyTheDipGame.jsx')),
+  'investor-quiz': lazy(() => import('./InvestorQuizGame.jsx')),
+  'candlestick-pattern': lazy(() => import('./CandlestickGame.jsx')),
 };
 
 export default function GamesPage({ guest, onRequestLogin }) {
@@ -44,12 +39,14 @@ export default function GamesPage({ guest, onRequestLogin }) {
   if (activeGame) {
     const ActiveComponent = GAME_COMPONENTS[activeGame.id];
     return (
-      <ActiveComponent
-        guest={guest}
-        onRequestLogin={onRequestLogin}
-        onExit={() => setActiveGameId(null)}
-        onScoreSaved={refreshResults}
-      />
+      <Suspense fallback={<p className="empty-state">Loading {activeGame.title}…</p>}>
+        <ActiveComponent
+          guest={guest}
+          onRequestLogin={onRequestLogin}
+          onExit={() => setActiveGameId(null)}
+          onScoreSaved={refreshResults}
+        />
+      </Suspense>
     );
   }
 
