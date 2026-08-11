@@ -2371,9 +2371,7 @@ input {
 }
 
 .news-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  display: block;
   padding: 12px 8px;
   border-bottom: 1px solid var(--border);
   color: inherit;
@@ -2388,19 +2386,6 @@ input {
 
 .news-card:last-child {
   border-bottom: none;
-}
-
-.news-thumbnail {
-  width: 96px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
-  background: var(--panel-bg);
-}
-
-.news-card-body {
-  min-width: 0;
 }
 
 .news-title {
