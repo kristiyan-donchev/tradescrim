@@ -13,7 +13,7 @@ const TOTAL_LESSONS = 20;
 // lessons is first completed (chronologically) — later imperfect lessons
 // don't un-earn it, same "achieved once, stays" rule as every other
 // achievement here.
-function firstTryStreakEarnedAt(completions, threshold) {
+export function firstTryStreakEarnedAt(completions, threshold) {
   let streak = 0;
   for (const c of completions) {
     streak = c.firstTryPerfect ? streak + 1 : 0;
@@ -25,7 +25,7 @@ function firstTryStreakEarnedAt(completions, threshold) {
 // Tracks how many distinct symbols are held simultaneously as transactions
 // replay in order, returning the timestamp of the transaction that first
 // pushed the count to `threshold` (or null if it never has been reached).
-function diversificationEarnedAt(transactions, threshold) {
+export function diversificationEarnedAt(transactions, threshold) {
   const shares = {};
   for (const t of transactions) {
     const qty = Number(t.shares);
@@ -40,7 +40,7 @@ function diversificationEarnedAt(transactions, threshold) {
 // A position "matures" into a long-term hold exactly 30 days after it was
 // first bought — earned the moment that clock runs out, not the moment
 // someone happens to check.
-function longTermHolderEarnedAt(transactions, holdingSymbols, now) {
+export function longTermHolderEarnedAt(transactions, holdingSymbols, now) {
   const candidates = holdingSymbols
     .map((symbol) => {
       const firstBuy = transactions.find((t) => t.symbol === symbol && t.type === 'BUY');
@@ -202,7 +202,7 @@ export async function getAchievements(userId) {
   const [transactionsResult, holdingsResult, leaderboard, challengeResultsResult, lessonCompletions] =
     await Promise.all([
       pool.query(
-        `SELECT symbol, type, timestamp, realized_pnl AS "realizedPnL" FROM transactions
+        `SELECT symbol, type, shares, timestamp, realized_pnl AS "realizedPnL" FROM transactions
          WHERE user_id = $1 ORDER BY timestamp ASC`,
         [userId]
       ),

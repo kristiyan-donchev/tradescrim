@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
 import {
   createUser,
@@ -116,7 +117,28 @@ const CLEAR_COOKIE_OPTIONS = {
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,24}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-router.post('/signup', async (req, res) => {
+// Per-IP limits on the two endpoints that create sessions or accounts from
+// arbitrary, unauthenticated input — the ones a bot can hit in a loop.
+// Signup is capped tighter than login since there's rarely a legitimate
+// reason for one IP to create many accounts, while login needs enough
+// headroom for a real person mistyping their password a few times.
+const signupLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many accounts created from this network. Try again in a bit.' },
+});
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts. Try again in a few minutes.' },
+});
+
+router.post('/signup', signupLimiter, async (req, res) => {
   const { username, email, password } = req.body || {};
 
   if (typeof username !== 'string' || !USERNAME_RE.test(username)) {
@@ -151,7 +173,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { username, password } = req.body || {};
   if (typeof username !== 'string' || typeof password !== 'string') {
     return res.status(400).json({ error: 'Username and password are required.' });

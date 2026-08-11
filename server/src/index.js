@@ -24,6 +24,12 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const CLIENT_ORIGINS = (process.env.CLIENT_ORIGIN || 'http://localhost:5173,http://localhost:4173').split(',');
 
+// Render (and most hosts) put the app behind a reverse proxy — without this,
+// every request looks like it comes from the proxy's own IP, which breaks
+// per-IP rate limiting on the auth routes (see routes/auth.js) either by
+// rate-limiting all users together or not limiting anyone meaningfully.
+app.set('trust proxy', 1);
+
 app.use(cors({ origin: CLIENT_ORIGINS, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
