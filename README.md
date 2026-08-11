@@ -158,10 +158,13 @@ copy the connection string. This is your `DATABASE_URL`.
 - Environment variables: `DATABASE_URL` (from step 1), `JWT_SECRET` (a long random string —
   generate one with e.g. `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`),
   `NODE_ENV=production`, and `CLIENT_ORIGIN` set to your custom domain (step 3), e.g.
-  `https://tradescrim.com`. Optionally add `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` /
-  `GOOGLE_REDIRECT_URI` (see [Accounts & auth](#accounts--auth)) to enable "Continue with Google" —
-  `GOOGLE_REDIRECT_URI` must be this backend's own public URL plus `/api/auth/google/callback`, and
-  must be added as an "Authorized redirect URI" on the Google OAuth client in
+  `https://tradescrim.com`. Add `FINNHUB_API_KEY` (a free key from
+  [finnhub.io/register](https://finnhub.io/register)) to power the News tab and the Bull or Bear
+  game — without it, News shows an error and Bull or Bear can't load rounds. Optionally add
+  `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI` (see
+  [Accounts & auth](#accounts--auth)) to enable "Continue with Google" — `GOOGLE_REDIRECT_URI` must
+  be this backend's own public URL plus `/api/auth/google/callback`, and must be added as an
+  "Authorized redirect URI" on the Google OAuth client in
   [Google Cloud Console](https://console.cloud.google.com/apis/credentials). `CLIENT_APP_URL` isn't
   needed here — it exists only for the case where the post-login redirect target differs from the
   bare `CLIENT_ORIGIN`, which doesn't apply once the frontend is served from its own domain's root.
