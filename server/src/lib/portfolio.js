@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { pool, STARTING_CASH } from '../db.js';
 import { yahooFinance } from './yahoo.js';
+import { computeNewAvgCost, computeRealizedPnL, computeRemainingShares } from './costBasis.js';
 
 const HOLDINGS_SELECT = `SELECT symbol, name, shares, avg_cost AS "avgCost" FROM holdings WHERE user_id = $1`;
 const TRANSACTIONS_SELECT = `
@@ -59,7 +60,7 @@ export async function buyShares(userId, { symbol, name, shares, price }) {
     );
     const existing = existingResult.rows[0];
     const newShares = (existing?.shares || 0) + shares;
-    const newAvgCost = existing ? (existing.avgCost * existing.shares + cost) / newShares : price;
+    const newAvgCost = computeNewAvgCost(existing?.shares || 0, existing?.avgCost || 0, shares, price);
 
     await client.query(`UPDATE users SET cash = $1 WHERE id = $2`, [cash - cost, userId]);
     await client.query(
@@ -106,8 +107,8 @@ export async function sellShares(userId, { symbol, name, shares, price }) {
     }
 
     const proceeds = shares * price;
-    const realizedPnL = (price - existing.avgCost) * shares;
-    const remainingShares = existing.shares - shares;
+    const realizedPnL = computeRealizedPnL(existing.avgCost, shares, price);
+    const remainingShares = computeRemainingShares(existing.shares, shares);
 
     await client.query(`UPDATE users SET cash = $1 WHERE id = $2`, [cash + proceeds, userId]);
     if (remainingShares <= 1e-9) {
