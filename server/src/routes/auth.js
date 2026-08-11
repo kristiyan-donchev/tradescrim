@@ -117,6 +117,32 @@ const CLEAR_COOKIE_OPTIONS = {
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,24}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// A handful of the passwords that show up at the top of every leaked-password
+// frequency list — these pass a naive "8+ chars, letter + number" check
+// (e.g. "password1") but offer essentially zero real protection. Blocking
+// this short, well-known list catches the overwhelming majority of
+// zero-effort passwords without the UX cost of a full entropy scorer.
+const COMMON_WEAK_PASSWORDS = new Set([
+  'password', 'password1', 'password123', '12345678', '123456789', '1234567890',
+  'qwerty123', 'qwertyuiop', 'letmein123', 'welcome123', 'iloveyou1', 'admin1234',
+  'trustno1', '87654321', 'abc123456', 'football1', 'baseball1', 'dragon123',
+  'monkey123', 'sunshine1', 'princess1', 'starwars1',
+]);
+
+// Length + a mix of character types is a much stronger, still-simple bar
+// than length alone, and rejecting known-common passwords catches the
+// "technically meets the rule" weak passwords that mix requirement misses.
+function passwordStrengthError(password) {
+  if (password.length < 8) return 'Password must be at least 8 characters.';
+  if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+    return 'Password must include at least one letter and one number.';
+  }
+  if (COMMON_WEAK_PASSWORDS.has(password.toLowerCase())) {
+    return 'That password is too common — please choose a less predictable one.';
+  }
+  return null;
+}
+
 // Per-IP limits on the two endpoints that create sessions or accounts from
 // arbitrary, unauthenticated input — the ones a bot can hit in a loop.
 // Signup is capped tighter than login since there's rarely a legitimate
@@ -147,8 +173,12 @@ router.post('/signup', signupLimiter, async (req, res) => {
   if (typeof email !== 'string' || !EMAIL_RE.test(email)) {
     return res.status(400).json({ error: 'Enter a valid email address.' });
   }
-  if (typeof password !== 'string' || password.length < 8) {
-    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  if (typeof password !== 'string') {
+    return res.status(400).json({ error: 'Password is required.' });
+  }
+  const passwordError = passwordStrengthError(password);
+  if (passwordError) {
+    return res.status(400).json({ error: passwordError });
   }
 
   try {
@@ -344,8 +374,12 @@ router.post('/username', requireAuth, async (req, res) => {
 
 router.post('/password', requireAuth, async (req, res) => {
   const { currentPassword, newPassword } = req.body || {};
-  if (typeof newPassword !== 'string' || newPassword.length < 8) {
-    return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+  if (typeof newPassword !== 'string') {
+    return res.status(400).json({ error: 'New password is required.' });
+  }
+  const passwordError = passwordStrengthError(newPassword);
+  if (passwordError) {
+    return res.status(400).json({ error: passwordError });
   }
   try {
     const user = await findUserById(req.userId);

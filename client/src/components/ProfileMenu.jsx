@@ -376,6 +376,7 @@ export default function ProfileMenu({ onReset }) {
                     minLength={8}
                     required
                   />
+                  <span className="field-hint">At least 8 characters, with a letter and a number.</span>
                   {passwordError && <div className="form-error">{passwordError}</div>}
                   {passwordSuccess && <div className="form-success">Password updated.</div>}
                   <button type="submit" className="secondary-button" disabled={passwordSaving}>

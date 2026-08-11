@@ -108,6 +108,7 @@ export default function AuthPage({ onBack }) {
               minLength={mode === 'signup' ? 8 : undefined}
               required
             />
+            {mode === 'signup' && <span className="field-hint">At least 8 characters, with a letter and a number.</span>}
           </label>
 
           {error && <div className="form-error">{error}</div>}
