@@ -26,6 +26,17 @@ export function AuthProvider({ children }) {
       return;
     }
 
+    const emailVerified = params.get('emailVerified');
+    if (emailVerified != null) {
+      // Just a UI signal from the verify-email redirect — strip it so a
+      // refresh doesn't re-trigger anything, and re-fetch the user below so
+      // emailVerified reflects the just-completed change immediately rather
+      // than waiting for the next natural refetch.
+      params.delete('emailVerified');
+      const rest = params.toString();
+      window.history.replaceState({}, '', window.location.pathname + (rest ? `?${rest}` : ''));
+    }
+
     api
       .fetchCurrentUser()
       .then(setUser)

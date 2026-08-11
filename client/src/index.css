@@ -2458,6 +2458,37 @@ input {
   color: var(--muted);
 }
 
+/* Verify email banner */
+.verify-email-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--amber-soft);
+  border-bottom: 1px solid var(--amber-border);
+  color: var(--amber);
+  font-size: 13px;
+}
+
+.verify-email-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* Achievements */
 .achievements-count {
   margin-left: 8px;

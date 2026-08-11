@@ -15,7 +15,11 @@ import {
   updatePasswordHash,
   deleteAccount,
   toPublicUser,
+  findUserByVerificationToken,
+  markEmailVerified,
+  setEmailVerificationToken,
 } from '../lib/users.js';
+import { sendVerificationEmail } from '../lib/email.js';
 import { signToken, COOKIE_NAME } from '../lib/jwt.js';
 import { requireAuth } from '../middleware/auth.js';
 
@@ -26,6 +30,7 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 const CLIENT_ORIGIN = (process.env.CLIENT_ORIGIN || 'http://localhost:5173').split(',')[0];
+const VERIFICATION_TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 // CLIENT_ORIGIN must stay a bare origin (scheme+host) to match the browser's Origin
 // header for CORS. CLIENT_APP_URL exists separately for cases where the page Google
 // should redirect back to after login differs from that bare origin.
@@ -190,7 +195,27 @@ router.post('/signup', signupLimiter, async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-    const user = await createUser({ username, email, passwordHash });
+    const verificationToken = crypto.randomBytes(24).toString('hex');
+    const user = await createUser({
+      username,
+      email,
+      passwordHash,
+      verificationToken,
+      verificationExpiresAt: Date.now() + VERIFICATION_TOKEN_TTL_MS,
+    });
+
+    // Signup succeeds even if the email fails to send (e.g. RESEND_API_KEY
+    // missing, or Resend itself down) — losing verification email delivery
+    // shouldn't lock a new user out of the account they just created. They
+    // can retry via the resend-verification endpoint once email is working.
+    // The link points at this backend's own /verify-email route (derived
+    // from the incoming request, same trick used nowhere else in this file
+    // since GOOGLE_REDIRECT_URI is pre-configured for the OAuth case but
+    // that env var is optional and shouldn't be a hard dependency here).
+    const verifyUrl = `${req.protocol}://${req.get('host')}/api/auth/verify-email?token=${verificationToken}`;
+    sendVerificationEmail(email, verifyUrl).catch((err) => {
+      console.error('signup: failed to send verification email', err.message);
+    });
 
     const token = signToken(user.id);
     res.cookie(COOKIE_NAME, token, COOKIE_OPTIONS);
@@ -229,6 +254,55 @@ router.post('/login', loginLimiter, async (req, res) => {
   } catch (err) {
     console.error('login error', err.message);
     res.status(500).json({ error: 'Something went wrong logging you in.' });
+  }
+});
+
+// Plain link click from an email client, not a fetch() — so this responds
+// with a redirect back to the app rather than JSON, same reasoning as the
+// Google OAuth callback below.
+router.get('/verify-email', async (req, res) => {
+  const { token } = req.query;
+  if (typeof token !== 'string') {
+    return res.redirect(`${CLIENT_APP_URL}?emailVerified=0`);
+  }
+  try {
+    const user = await findUserByVerificationToken(token);
+    if (!user || Number(user.email_verification_expires_at) < Date.now()) {
+      return res.redirect(`${CLIENT_APP_URL}?emailVerified=0`);
+    }
+    await markEmailVerified(user.id);
+    res.redirect(`${CLIENT_APP_URL}?emailVerified=1`);
+  } catch (err) {
+    console.error('verify-email error', err.message);
+    res.redirect(`${CLIENT_APP_URL}?emailVerified=0`);
+  }
+});
+
+const resendVerificationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests. Try again in a few minutes.' },
+});
+
+router.post('/resend-verification', requireAuth, resendVerificationLimiter, async (req, res) => {
+  try {
+    const user = await findUserById(req.userId);
+    if (!user.password_hash) {
+      return res.status(400).json({ error: 'Google accounts are already verified.' });
+    }
+    if (user.email_verified) {
+      return res.status(400).json({ error: 'This email is already verified.' });
+    }
+    const verificationToken = crypto.randomBytes(24).toString('hex');
+    await setEmailVerificationToken(user.id, verificationToken, Date.now() + VERIFICATION_TOKEN_TTL_MS);
+    const verifyUrl = `${req.protocol}://${req.get('host')}/api/auth/verify-email?token=${verificationToken}`;
+    await sendVerificationEmail(user.email, verifyUrl);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('resend-verification error', err.message);
+    res.status(500).json({ error: 'Could not send a new verification email right now.' });
   }
 });
 

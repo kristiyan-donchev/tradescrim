@@ -13,6 +13,7 @@ import AdSlot from './AdSlot.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 import GuestGate from './GuestGate.jsx';
 import AchievementToastHost from './AchievementToastHost.jsx';
+import VerifyEmailBanner from './VerifyEmailBanner.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
 import { fetchQuote } from '../lib/api.js';
 
@@ -148,10 +149,12 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
   const meta = PAGE_META[page];
 
   return (
-    <div className="app-shell">
-      {showHelp && <Onboarding onClose={closeHelp} />}
+    <>
+      {!guest && <VerifyEmailBanner />}
+      <div className="app-shell">
+        {showHelp && <Onboarding onClose={closeHelp} />}
 
-      <AchievementToastHost guest={guest} />
+        <AchievementToastHost guest={guest} />
 
       <Sidebar
         page={page}
@@ -211,6 +214,7 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
           </aside>
         </div>
       </main>
-    </div>
+      </div>
+    </>
   );
 }

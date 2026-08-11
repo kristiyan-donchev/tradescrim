@@ -8,6 +8,10 @@ types.setTypeParser(20, (val) => parseInt(val, 10));
 
 export const STARTING_CASH = 10000;
 
+// Fixed point in time email verification shipped — see the comment on the
+// migration below for why this can't be Date.now().
+const EMAIL_VERIFICATION_BACKFILL_CUTOFF = 1786412600000;
+
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   throw new Error(
@@ -36,6 +40,19 @@ export async function initSchema() {
     -- Migrate existing deployments created before Google sign-in was added.
     ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id TEXT UNIQUE;
     ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;
+
+    -- Email verification. Google sign-ups are marked verified immediately
+    -- (Google already confirmed the email itself); password sign-ups start
+    -- unverified and get a one-time token to confirm via email. Existing
+    -- accounts from before this column existed are backfilled to verified
+    -- so nobody already using the app gets locked out retroactively — using
+    -- a fixed cutoff captured once here, NOT Date.now(), since initSchema()
+    -- reruns on every server start and Date.now() would keep re-backfilling
+    -- (i.e. auto-verifying) every real signup made after this shipped.
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verification_token TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verification_expires_at BIGINT;
+    UPDATE users SET email_verified = TRUE WHERE email_verified = FALSE AND created_at < ${EMAIL_VERIFICATION_BACKFILL_CUTOFF};
 
     CREATE TABLE IF NOT EXISTS holdings (
       id SERIAL PRIMARY KEY,

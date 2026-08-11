@@ -117,6 +117,10 @@ export function logout() {
   return postJson(`${BASE}/auth/logout`, {}).finally(clearSessionCookie);
 }
 
+export function resendVerificationEmail() {
+  return postJson(`${BASE}/auth/resend-verification`, {});
+}
+
 export function fetchCurrentUser() {
   return getJson(`${BASE}/auth/me`).then((d) => d.user);
 }

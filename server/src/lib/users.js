@@ -1,10 +1,13 @@
 import { pool, STARTING_CASH } from '../db.js';
 
-export async function createUser({ username, email, passwordHash }) {
+// Password sign-ups start unverified with a one-time token attached
+// immediately, so the caller can email it out in the same request without a
+// second round trip to set it.
+export async function createUser({ username, email, passwordHash, verificationToken, verificationExpiresAt }) {
   const result = await pool.query(
-    `INSERT INTO users (username, email, password_hash, cash, created_at)
-     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-    [username, email, passwordHash, STARTING_CASH, Date.now()]
+    `INSERT INTO users (username, email, password_hash, cash, created_at, email_verification_token, email_verification_expires_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+    [username, email, passwordHash, STARTING_CASH, Date.now(), verificationToken, verificationExpiresAt]
   );
   return result.rows[0];
 }
@@ -29,10 +32,14 @@ export async function findUserByGoogleId(googleId) {
   return result.rows[0] || null;
 }
 
+// Google sign-ups are marked verified immediately — Google itself already
+// confirmed the email (checked via profile.email_verified before this is
+// ever called; see routes/auth.js's google/callback handler) — so there's
+// no separate token/email step for this path.
 export async function createGoogleUser({ username, email, googleId }) {
   const result = await pool.query(
-    `INSERT INTO users (username, email, google_id, cash, created_at)
-     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    `INSERT INTO users (username, email, google_id, cash, created_at, email_verified)
+     VALUES ($1, $2, $3, $4, $5, TRUE) RETURNING *`,
     [username, email, googleId, STARTING_CASH, Date.now()]
   );
   return result.rows[0];
@@ -71,6 +78,26 @@ export async function updateUsername(userId, username) {
 
 export async function updatePasswordHash(userId, passwordHash) {
   await pool.query(`UPDATE users SET password_hash = $1 WHERE id = $2`, [passwordHash, userId]);
+}
+
+export async function findUserByVerificationToken(token) {
+  const result = await pool.query(`SELECT * FROM users WHERE email_verification_token = $1`, [token]);
+  return result.rows[0] || null;
+}
+
+export async function markEmailVerified(userId) {
+  await pool.query(
+    `UPDATE users SET email_verified = TRUE, email_verification_token = NULL, email_verification_expires_at = NULL
+     WHERE id = $1`,
+    [userId]
+  );
+}
+
+export async function setEmailVerificationToken(userId, token, expiresAt) {
+  await pool.query(
+    `UPDATE users SET email_verification_token = $1, email_verification_expires_at = $2 WHERE id = $3`,
+    [token, expiresAt, userId]
+  );
 }
 
 // Deletes a user and everything scoped to them. None of these tables have
@@ -116,5 +143,6 @@ export function toPublicUser(user) {
     email: user.email,
     createdAt: user.created_at,
     hasPassword: Boolean(user.password_hash),
+    emailVerified: Boolean(user.email_verified),
   };
 }
