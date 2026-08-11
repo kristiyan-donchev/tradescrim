@@ -12,6 +12,7 @@ import GamesPage from './GamesPage.jsx';
 import AdSlot from './AdSlot.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 import GuestGate from './GuestGate.jsx';
+import AchievementToastHost from './AchievementToastHost.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
 import { fetchQuote } from '../lib/api.js';
 
@@ -149,6 +150,8 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
   return (
     <div className="app-shell">
       {showHelp && <Onboarding onClose={closeHelp} />}
+
+      <AchievementToastHost guest={guest} />
 
       <Sidebar
         page={page}
