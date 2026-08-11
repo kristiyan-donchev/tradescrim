@@ -56,7 +56,9 @@ export default function TradePanel({ quote, holding, cash, onBuy, onSell, onPlac
     setPlaced(false);
 
     if (orderType === 'MARKET') {
-      const order = { symbol: quote.symbol, name: quote.name, shares: sharesNum, price: quote.price };
+      // No price sent here — the server fetches the live price itself for
+      // market orders rather than trusting whatever this client last saw.
+      const order = { symbol: quote.symbol, name: quote.name, shares: sharesNum };
       const ok = side === 'BUY' ? await onBuy(order) : await onSell(order);
       if (ok) {
         setShares('');

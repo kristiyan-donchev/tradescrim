@@ -82,6 +82,14 @@ router.get('/results', optionalAuth, async (req, res) => {
 });
 
 router.post('/:gameId/result', requireAuth, async (req, res) => {
+  // Only the leaderboard GET route checked gameId against this list before —
+  // this one didn't, so any string was accepted and written straight into
+  // game_results. Same allowlist, so results can't be filed under a made-up
+  // game id (or silently orphaned from every leaderboard that would otherwise
+  // show them).
+  if (!VALID_GAME_IDS.includes(req.params.gameId)) {
+    return res.status(400).json({ error: 'Unknown game.' });
+  }
   try {
     const score = Number(req.body.score);
     if (!Number.isFinite(score)) return res.status(400).json({ error: 'Invalid score.' });

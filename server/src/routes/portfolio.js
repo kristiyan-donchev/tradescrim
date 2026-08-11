@@ -12,6 +12,7 @@ import {
   getDiversificationLeaderboard,
 } from '../lib/portfolio.js';
 import { getFriendIds } from '../lib/friends.js';
+import { getQuote } from '../lib/quotes.js';
 
 const router = Router();
 
@@ -60,14 +61,21 @@ router.get('/performance', async (req, res) => {
   }
 });
 
+// Market orders fill at whatever price the server itself fetches right now —
+// the client's `price` is never trusted for this. It used to be (whatever
+// the client's last-displayed quote happened to be, sent straight through to
+// buyShares/sellShares), which meant anyone could edit the request in
+// devtools and buy or sell at any price they wanted, fabricating unlimited
+// profit and topping the leaderboard/achievements on fake gains.
 router.post('/buy', async (req, res) => {
-  const { symbol, name, shares, price } = req.body || {};
+  const { symbol, name, shares } = req.body || {};
   try {
+    const quote = await getQuote(symbol);
     const portfolio = await buyShares(req.userId, {
       symbol,
-      name,
+      name: name || quote.name,
       shares: Number(shares),
-      price: Number(price),
+      price: quote.price,
     });
     res.json(portfolio);
   } catch (err) {
@@ -76,13 +84,14 @@ router.post('/buy', async (req, res) => {
 });
 
 router.post('/sell', async (req, res) => {
-  const { symbol, name, shares, price } = req.body || {};
+  const { symbol, name, shares } = req.body || {};
   try {
+    const quote = await getQuote(symbol);
     const portfolio = await sellShares(req.userId, {
       symbol,
-      name,
+      name: name || quote.name,
       shares: Number(shares),
-      price: Number(price),
+      price: quote.price,
     });
     res.json(portfolio);
   } catch (err) {
