@@ -7,6 +7,7 @@ export const LEARN_TOPICS = [
   {
     id: 'getting-started',
     title: 'Getting Started',
+    description: 'What paper trading is, and how this simulator works',
     icon: 'rocket',
     lessons: [
       {
@@ -101,6 +102,7 @@ export const LEARN_TOPICS = [
   {
     id: 'reading-the-market',
     title: 'Reading the Market',
+    description: 'Ticker symbols, quotes, and how to read a price chart',
     icon: 'trending-up',
     lessons: [
       {
@@ -227,6 +229,7 @@ export const LEARN_TOPICS = [
   {
     id: 'placing-orders',
     title: 'Placing Orders',
+    description: 'Market orders, cost basis, and realized vs. unrealized P&L',
     icon: 'receipt',
     lessons: [
       {
@@ -305,6 +308,7 @@ export const LEARN_TOPICS = [
   {
     id: 'order-types',
     title: 'Order Types',
+    description: 'Limit, stop, and stop-limit orders',
     icon: 'sliders',
     lessons: [
       {
@@ -441,6 +445,7 @@ export const LEARN_TOPICS = [
   {
     id: 'risk-and-diversification',
     title: 'Risk & Diversification',
+    description: 'Volatility and spreading risk across holdings',
     icon: 'scale',
     lessons: [
       {
@@ -534,6 +539,7 @@ export const LEARN_TOPICS = [
   {
     id: 'tracking-performance',
     title: 'Tracking Performance',
+    description: 'Profit & loss, ROI, and the Leaderboard',
     icon: 'bar-chart',
     lessons: [
       {
@@ -622,6 +628,7 @@ export const LEARN_TOPICS = [
   {
     id: 'investing-mindset',
     title: 'Investing Mindset',
+    description: 'Long-term thinking and common beginner mistakes',
     icon: 'brain',
     lessons: [
       {
@@ -719,6 +726,7 @@ export const LEARN_TOPICS = [
   {
     id: 'types-of-investments',
     title: 'Types of Investments',
+    description: 'Stocks, funds, bonds, and other asset classes',
     icon: 'coins',
     lessons: [
       {
@@ -898,6 +906,7 @@ export const LEARN_TOPICS = [
   {
     id: 'personal-finance',
     title: 'Personal Finance',
+    description: 'Budgeting, loans, retirement accounts, and saving',
     icon: 'sprout',
     lessons: [
       {
