@@ -1116,9 +1116,19 @@ input {
 }
 
 /* Tables */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .holdings-table,
 .transactions-table {
   width: 100%;
+  /* Keeps columns at a readable width instead of letting them get
+     squeezed illegibly on narrow screens — .table-scroll's overflow-x
+     takes over once the table's natural width exceeds its container,
+     the same way the mobile nav row scrolls instead of compressing. */
+  min-width: max-content;
   border-collapse: collapse;
   font-size: 14px;
 }

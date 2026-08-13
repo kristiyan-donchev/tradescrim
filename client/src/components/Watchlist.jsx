@@ -40,45 +40,47 @@ export default function Watchlist({ watchlist, loading, error, onRemove, onSelec
   }
 
   return (
-    <table className="holdings-table">
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Current price</th>
-          <th>Change</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {watchlist.map((w) => {
-          const q = quotes[w.symbol];
-          return (
-            <tr key={w.symbol} className="clickable-row" onClick={() => onSelect(w.symbol, w.name)}>
-              <td>
-                <strong>{w.symbol}</strong>
-                <div className="row-subtext">{w.name}</div>
-              </td>
-              <td>{q ? `$${q.price.toFixed(2)}` : '—'}</td>
-              <td className={q && q.change >= 0 ? 'positive' : 'negative'}>
-                {q && q.change != null ? `${q.change >= 0 ? '+' : ''}${q.changePercent.toFixed(2)}%` : '—'}
-              </td>
-              <td>
-                <button
-                  type="button"
-                  className="icon-button"
-                  aria-label={`Remove ${w.symbol} from watchlist`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove(w.symbol);
-                  }}
-                >
-                  <Icon name="x" size={16} />
-                </button>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+    <div className="table-scroll">
+      <table className="holdings-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Current price</th>
+            <th>Change</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {watchlist.map((w) => {
+            const q = quotes[w.symbol];
+            return (
+              <tr key={w.symbol} className="clickable-row" onClick={() => onSelect(w.symbol, w.name)}>
+                <td>
+                  <strong>{w.symbol}</strong>
+                  <div className="row-subtext">{w.name}</div>
+                </td>
+                <td>{q ? `$${q.price.toFixed(2)}` : '—'}</td>
+                <td className={q && q.change >= 0 ? 'positive' : 'negative'}>
+                  {q && q.change != null ? `${q.change >= 0 ? '+' : ''}${q.changePercent.toFixed(2)}%` : '—'}
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label={`Remove ${w.symbol} from watchlist`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemove(w.symbol);
+                    }}
+                  >
+                    <Icon name="x" size={16} />
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

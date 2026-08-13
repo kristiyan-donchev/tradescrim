@@ -70,39 +70,41 @@ function StandingsView({ challengeId, onBack }) {
           {data.standings.length === 0 ? (
             <p className="empty-state">No participants yet.</p>
           ) : (
-            <table className="holdings-table leaderboard-table">
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Trader</th>
-                  <th>ROI</th>
-                  {data.finalized && <th>Badge</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {data.standings.map((entry) => {
-                  const isMe = user && entry.userId === user.id;
-                  return (
-                    <tr key={entry.userId} className={isMe ? 'leaderboard-row-me' : ''}>
-                      <td className="leaderboard-rank">#{entry.rank}</td>
-                      <td>
-                        {entry.username}
-                        {isMe && ' (you)'}
-                      </td>
-                      <td className={entry.roiPercent >= 0 ? 'positive' : 'negative'}>
-                        {entry.roiPercent >= 0 ? '+' : ''}
-                        {entry.roiPercent.toFixed(2)}%
-                      </td>
-                      {data.finalized && (
+            <div className="table-scroll">
+              <table className="holdings-table leaderboard-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Trader</th>
+                    <th>ROI</th>
+                    {data.finalized && <th>Badge</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.standings.map((entry) => {
+                    const isMe = user && entry.userId === user.id;
+                    return (
+                      <tr key={entry.userId} className={isMe ? 'leaderboard-row-me' : ''}>
+                        <td className="leaderboard-rank">#{entry.rank}</td>
                         <td>
-                          <BadgeLabel badge={entry.badge} />
+                          {entry.username}
+                          {isMe && ' (you)'}
                         </td>
-                      )}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        <td className={entry.roiPercent >= 0 ? 'positive' : 'negative'}>
+                          {entry.roiPercent >= 0 ? '+' : ''}
+                          {entry.roiPercent.toFixed(2)}%
+                        </td>
+                        {data.finalized && (
+                          <td>
+                            <BadgeLabel badge={entry.badge} />
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </>
       )}
