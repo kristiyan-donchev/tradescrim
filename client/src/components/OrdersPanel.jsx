@@ -21,46 +21,48 @@ export default function OrdersPanel({ orders, loading, error, onCancel }) {
   }
 
   return (
-    <table className="holdings-table">
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Side</th>
-          <th>Type</th>
-          <th>Shares</th>
-          <th>Trigger</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {orders.map((o) => (
-          <tr key={o.id}>
-            <td>
-              <strong>{o.symbol}</strong>
-              <div className="row-subtext">{formatDate(o.createdAt)}</div>
-            </td>
-            <td className={o.side === 'BUY' ? 'positive' : 'negative'}>{o.side}</td>
-            <td>{ORDER_TYPE_LABELS[o.orderType]}</td>
-            <td>{o.shares}</td>
-            <td>{priceSummary(o)}</td>
-            <td>
-              <span className={`order-status ${o.status.toLowerCase()}`}>{STATUS_LABELS[o.status]}</span>
-              {o.status === 'FILLED' && (
-                <div className="row-subtext">at ${o.filledPrice?.toFixed(2)}</div>
-              )}
-              {o.status === 'CANCELLED' && o.cancelReason && <div className="row-subtext">{o.cancelReason}</div>}
-            </td>
-            <td>
-              {o.status === 'PENDING' && (
-                <button type="button" className="icon-button" aria-label="Cancel order" onClick={() => onCancel(o.id)}>
-                  <Icon name="x" size={16} />
-                </button>
-              )}
-            </td>
+    <div className="table-scroll">
+      <table className="holdings-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Side</th>
+            <th>Type</th>
+            <th>Shares</th>
+            <th>Trigger</th>
+            <th>Status</th>
+            <th></th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {orders.map((o) => (
+            <tr key={o.id}>
+              <td>
+                <strong>{o.symbol}</strong>
+                <div className="row-subtext">{formatDate(o.createdAt)}</div>
+              </td>
+              <td className={o.side === 'BUY' ? 'positive' : 'negative'}>{o.side}</td>
+              <td>{ORDER_TYPE_LABELS[o.orderType]}</td>
+              <td>{o.shares}</td>
+              <td>{priceSummary(o)}</td>
+              <td>
+                <span className={`order-status ${o.status.toLowerCase()}`}>{STATUS_LABELS[o.status]}</span>
+                {o.status === 'FILLED' && (
+                  <div className="row-subtext">at ${o.filledPrice?.toFixed(2)}</div>
+                )}
+                {o.status === 'CANCELLED' && o.cancelReason && <div className="row-subtext">{o.cancelReason}</div>}
+              </td>
+              <td>
+                {o.status === 'PENDING' && (
+                  <button type="button" className="icon-button" aria-label="Cancel order" onClick={() => onCancel(o.id)}>
+                    <Icon name="x" size={16} />
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

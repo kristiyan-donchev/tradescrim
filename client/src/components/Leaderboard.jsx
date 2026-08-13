@@ -108,30 +108,32 @@ export default function Leaderboard() {
       {loading && <div className="chart-status">Loading leaderboard…</div>}
       {errorMsg && <div className="chart-status error">{errorMsg}</div>}
       {!loading && !errorMsg && entries.length > 0 && (
-        <table className="holdings-table leaderboard-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Trader</th>
-              <th>{categoryMeta.metricLabel}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entries.map((entry) => {
-              const isMe = user && entry.userId === user.id;
-              return (
-                <tr key={entry.userId} className={isMe ? 'leaderboard-row-me' : ''}>
-                  <td className="leaderboard-rank">#{entry.rank}</td>
-                  <td>
-                    {entry.username}
-                    {isMe && ' (you)'}
-                  </td>
-                  <MetricCell category={category} entry={entry} />
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="table-scroll">
+          <table className="holdings-table leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Trader</th>
+                <th>{categoryMeta.metricLabel}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.map((entry) => {
+                const isMe = user && entry.userId === user.id;
+                return (
+                  <tr key={entry.userId} className={isMe ? 'leaderboard-row-me' : ''}>
+                    <td className="leaderboard-rank">#{entry.rank}</td>
+                    <td>
+                      {entry.username}
+                      {isMe && ' (you)'}
+                    </td>
+                    <MetricCell category={category} entry={entry} />
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
       {!loading && !errorMsg && entries.length === 0 && <p className="empty-state">No traders to rank yet.</p>}
     </div>
