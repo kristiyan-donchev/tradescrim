@@ -1586,87 +1586,153 @@ input {
   transition: width 0.2s var(--ease);
 }
 
-.learn-layout {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.learn-nav {
-  width: 220px;
-  flex-shrink: 0;
+.learn-path {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 28px;
+  max-width: 480px;
+  margin: 24px auto 0;
 }
 
-.learn-topic-title {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  padding: 0 10px;
-  margin-bottom: 6px;
-}
-
-.learn-lesson-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.learn-topic-group.locked .learn-topic-title {
-  color: var(--muted);
-  opacity: 0.7;
-}
-
-.learn-lesson-item {
+.learn-unit-banner {
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  border: none;
-  background: none;
-  color: var(--text);
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.15s var(--ease), color 0.15s var(--ease);
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
 }
 
-.learn-lesson-item:hover {
+.learn-unit-banner.locked {
   background: var(--panel-bg-hover);
+  color: var(--muted);
+  box-shadow: none;
+  border: 1px dashed var(--border);
 }
 
-.learn-lesson-item:disabled {
+.learn-unit-banner-reference {
+  background: var(--muted);
+}
+
+.learn-unit-banner-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.learn-unit-banner.locked .learn-unit-banner-icon {
+  background: none;
+}
+
+.learn-unit-banner-title {
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+.learn-unit-banner-desc {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.learn-unit-nodes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 34px;
+  padding: 24px 0;
+}
+
+.learn-path-node-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.learn-path-start-flag {
+  position: absolute;
+  top: -30px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 5px 12px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.learn-path-start-flag::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: var(--panel-bg);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.learn-path-node {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.1s var(--ease);
+}
+
+.learn-path-node:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.learn-path-node.available {
+  background: var(--node-color);
+  color: #fff;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.18);
+}
+
+.learn-path-node.complete {
+  background: var(--amber);
+  color: #fff;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.18);
+}
+
+.learn-path-node.locked {
+  background: var(--panel-bg-hover);
   color: var(--muted);
-  opacity: 0.55;
+  border: 1px solid var(--border);
   cursor: not-allowed;
 }
 
-.learn-lesson-item:disabled:hover {
-  background: none;
-}
-
-.learn-lesson-item.active {
-  background: var(--primary-soft);
-  color: var(--primary);
+.learn-path-node-label {
+  font-size: 12px;
   font-weight: 600;
+  color: var(--muted);
+  max-width: 100px;
+  text-align: center;
+  line-height: 1.3;
 }
 
-.learn-lesson-check {
-  width: 16px;
-  flex-shrink: 0;
-  color: var(--green);
-  font-weight: 700;
-}
-
-.learn-content {
-  flex: 1;
-  min-width: 0;
+.learn-lesson-modal {
+  max-width: 640px;
 }
 
 .learn-lesson-summary {
@@ -1786,21 +1852,11 @@ input {
   gap: 8px;
 }
 
-@media (max-width: 760px) {
-  .learn-layout {
-    flex-direction: column;
-  }
-
-  .learn-nav {
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .learn-topic-group {
-    flex: 1;
-    min-width: 160px;
+@media (max-width: 420px) {
+  /* Narrower phones can't fit the full path sway without the outer nodes
+     clipping against the screen edge, so tone the wave down. */
+  .learn-path-node-wrap {
+    transform: translateX(calc(var(--node-offset, 0) * 0.55)) !important;
   }
 }
 
