@@ -53,8 +53,9 @@ delayed market prices and **100% virtual money**.
     vetted, production-hardened multi-tenant service — don't put real sensitive data behind it.
   - There is **no email verification** and **no password reset flow** — if a user forgets their
     password, there's no recovery path other than querying the Postgres database directly.
-  - There is **no rate limiting** on login/signup, no account lockout, and no CSRF protection beyond
-    the cookie's `SameSite` setting.
+  - Login, signup, and verification-resend are **rate-limited per IP** (see `server/src/routes/auth.js`),
+    but there is still no account lockout, no CAPTCHA/bot protection on signup, and no CSRF protection
+    beyond the cookie's `SameSite` setting.
   - The JWT signing secret (`JWT_SECRET`) **must** be set via `.env` for stable sessions in any
     real deployment; if left unset the server generates a random one at startup, which invalidates
     all sessions on every restart (see [Setup & running locally](#setup--running-locally)).
@@ -215,11 +216,11 @@ cd client && npm run build && npm run preview
 - **Rate limits:** the free Yahoo Finance data source has informal rate limits. Heavy, rapid-fire
   searching/quoting could occasionally get temporarily throttled.
 - **Accounts are real but not production-hardened:** see [Accounts & auth](#accounts--auth) above —
-  no email verification, no password reset, no rate limiting. Fine for personal use or a portfolio
-  demo; not vetted for handling a large public user base. Use the in-app "Reset simulator" button if
-  you want to intentionally wipe your own portfolio and start over.
-- Market orders only — no limit orders, stop orders, options, short selling, margin, dividends, or
-  fees/commissions are modeled. This keeps the simulator simple and focused on core buy/sell/P&L
+  no email verification, no password reset, no CAPTCHA/bot protection on signup. Fine for personal
+  use or a portfolio demo; not vetted for handling a large public user base. Use the in-app "Reset
+  simulator" button if you want to intentionally wipe your own portfolio and start over.
+- Market, limit, stop, and stop-limit orders are supported — no options, short selling, margin,
+  dividends, or fees/commissions are modeled. This keeps the simulator focused on core buy/sell/P&L
   mechanics for beginners.
 
 ## Disclaimer

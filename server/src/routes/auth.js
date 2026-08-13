@@ -170,7 +170,16 @@ const loginLimiter = rateLimit({
 });
 
 router.post('/signup', signupLimiter, async (req, res) => {
-  const { username, email, password } = req.body || {};
+  const { username, email, password, website } = req.body || {};
+
+  // Honeypot: a field the client hides from real users (see AuthPage.jsx),
+  // so anything non-empty here is almost certainly a bot filling every
+  // input it finds. Respond as if signup succeeded-ish (a generic client
+  // error, not a tell-tale "blocked by honeypot") rather than creating an
+  // account, so a bot gets no useful signal either way.
+  if (typeof website === 'string' && website.trim() !== '') {
+    return res.status(400).json({ error: 'Something went wrong creating your account.' });
+  }
 
   if (typeof username !== 'string' || !USERNAME_RE.test(username)) {
     return res.status(400).json({ error: 'Username must be 3-24 characters (letters, numbers, underscore).' });

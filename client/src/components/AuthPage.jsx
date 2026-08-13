@@ -9,6 +9,11 @@ export default function AuthPage({ onBack }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // Honeypot: a field real users never see or fill, but naive signup bots
+  // that blindly fill every form input will. Left non-empty, the server
+  // silently no-ops the signup instead of flagging it, since a genuine user
+  // should never be able to trigger it in the first place.
+  const [website, setWebsite] = useState('');
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -30,7 +35,7 @@ export default function AuthPage({ onBack }) {
       if (mode === 'login') {
         await login({ username, password });
       } else {
-        await signup({ username, email, password });
+        await signup({ username, email, password, website });
       }
     } catch (err) {
       setError(err.message);
@@ -94,6 +99,20 @@ export default function AuthPage({ onBack }) {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
+              />
+            </label>
+          )}
+
+          {mode === 'signup' && (
+            <label className="honeypot-field" aria-hidden="true">
+              <span>Website</span>
+              <input
+                type="text"
+                name="website"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
               />
             </label>
           )}

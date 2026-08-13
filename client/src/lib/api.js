@@ -88,8 +88,8 @@ function clearSessionCookie() {
   document.cookie = `${SESSION_COOKIE_NAME}=; Domain=${SESSION_COOKIE_DOMAIN}; Path=/; Max-Age=0; Secure; SameSite=None`;
 }
 
-export function signup({ username, email, password }) {
-  return postJson(`${BASE}/auth/signup`, { username, email, password }).then((d) => {
+export function signup({ username, email, password, website }) {
+  return postJson(`${BASE}/auth/signup`, { username, email, password, website }).then((d) => {
     persistSessionCookie(d.token);
     return d.user;
   });
