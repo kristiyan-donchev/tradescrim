@@ -895,4 +895,221 @@ export const LEARN_TOPICS = [
       },
     ],
   },
+  {
+    id: 'personal-finance',
+    title: 'Personal Finance',
+    icon: 'sprout',
+    lessons: [
+      {
+        id: 'budgeting-basics',
+        title: 'Budgeting basics',
+        summary: 'Where your money goes each month, and a simple way to plan it.',
+        sections: [
+          {
+            heading: 'What a budget actually does',
+            body: "A budget is just a plan for your income before it arrives — deciding on purpose where each dollar goes instead of finding out after the fact where it went. It's not about restriction; it's about making sure the things you actually care about (savings, debt payoff, investing) get funded before the leftover money quietly disappears.",
+          },
+          {
+            heading: 'A simple starting split: 50/30/20',
+            body: 'One popular rule of thumb splits after-tax income into three buckets: 50% needs (rent, groceries, utilities, minimum debt payments), 30% wants (dining out, entertainment, subscriptions), and 20% savings and extra debt payoff. It\'s a starting point to adjust, not a law — someone with high rent or aggressive savings goals will land on different numbers.',
+          },
+          {
+            heading: 'Pay yourself first',
+            body: 'Instead of saving whatever is left at the end of the month (which is often nothing), "paying yourself first" means moving money into savings or investing the moment income arrives, then budgeting the rest for spending. Automating that transfer removes the temptation to skip it.',
+          },
+        ],
+        quiz: [
+          {
+            question: 'In the 50/30/20 rule, what does the 20% typically represent?',
+            options: ['Rent and groceries', 'Entertainment and dining out', 'Savings and extra debt payoff', 'Taxes'],
+            correctIndex: 2,
+            explanation: 'The 50/30/20 split reserves 20% of after-tax income for savings and paying down debt beyond the minimum.',
+          },
+          {
+            question: 'What does "pay yourself first" mean?',
+            options: [
+              'Spend on wants before needs',
+              'Move money to savings/investing as soon as income arrives, before discretionary spending',
+              'Only pay bills that are overdue',
+              'Give yourself a bonus each year',
+            ],
+            correctIndex: 1,
+            explanation: 'Paying yourself first treats savings as a required "bill" paid immediately, rather than whatever happens to be left over.',
+          },
+        ],
+      },
+      {
+        id: 'emergency-funds',
+        title: 'Emergency funds',
+        summary: 'A cash cushion for the unexpected — how much, and where to keep it.',
+        sections: [
+          {
+            heading: 'Why keep cash on the side at all',
+            body: "An emergency fund is money set aside specifically for the unplanned: a job loss, a medical bill, a car repair. Without one, an unexpected expense often gets paid for with high-interest debt, like a credit card, turning a one-time problem into an ongoing one.",
+          },
+          {
+            heading: 'How much is enough',
+            body: 'A common target is 3-6 months of essential living expenses — more if your income is unpredictable (freelance, commission-based), less if you have strong job security and few dependents. The exact number matters less than having some cushion instead of none.',
+          },
+          {
+            heading: 'Where it belongs (and where it doesn\'t)',
+            body: "An emergency fund needs to be liquid and stable — a savings account, not the stock market. The whole point is that it's there, at its full value, the moment you need it; money invested in stocks can be down 20% exactly when an emergency hits, forcing you to sell at a loss.",
+          },
+        ],
+        quiz: [
+          {
+            question: 'What is the main purpose of an emergency fund?',
+            options: [
+              'To earn the highest possible investment return',
+              'To cover unplanned expenses without relying on high-interest debt',
+              'To pay for vacations',
+              'To replace a retirement account',
+            ],
+            correctIndex: 1,
+            explanation: 'An emergency fund exists so a surprise expense doesn\'t have to become credit card debt.',
+          },
+          {
+            question: 'Why is a savings account usually a better home for an emergency fund than the stock market?',
+            options: [
+              'Savings accounts always pay more interest than stocks return',
+              'The fund needs to be stable and available immediately, not subject to market swings',
+              'It is illegal to invest emergency savings',
+              'Stocks cannot be sold quickly',
+            ],
+            correctIndex: 1,
+            explanation: 'An emergency fund needs to be there at full value when you need it — market-invested money could be down right when an emergency hits.',
+          },
+        ],
+      },
+      {
+        id: 'how-loans-work',
+        title: 'How loans work',
+        summary: 'Principal, interest, APR, and good debt vs. bad debt.',
+        sections: [
+          {
+            heading: 'The pieces of a loan',
+            body: 'A loan has a principal (the amount borrowed), an interest rate (the cost of borrowing, usually shown yearly), and a term (how long you have to repay it). Most loans are repaid in regular installments that blend principal and interest — early payments are mostly interest, later ones are mostly principal, as the remaining balance shrinks.',
+          },
+          {
+            heading: 'APR vs. interest rate',
+            body: 'The Annual Percentage Rate (APR) is a fuller picture of borrowing cost than the interest rate alone — it typically folds in fees and other charges, expressed as a yearly rate. When comparing two loan offers, the APR is usually the more accurate number to compare, since a lower interest rate can hide higher fees.',
+          },
+          {
+            heading: '"Good" debt vs. "bad" debt',
+            body: 'Not all debt is equally risky. Debt often called "good" (a mortgage, student loans, a reasonable business loan) tends to fund something that builds value or future earning power and usually carries a lower rate. High-interest, non-deductible debt with nothing to show for it — most credit card debt is the classic example — is the kind worth paying down aggressively first.',
+          },
+        ],
+        quiz: [
+          {
+            question: 'What does APR typically include that a plain interest rate might not?',
+            options: [
+              'Nothing — they always mean the same thing',
+              'Fees and other borrowing costs, folded into one yearly rate',
+              'The lender\'s profit margin only',
+              'Only the principal amount',
+            ],
+            correctIndex: 1,
+            explanation: 'APR is designed to be a more complete, comparable cost of borrowing than the interest rate alone.',
+          },
+          {
+            question: 'Why is credit card debt often singled out as especially worth paying off quickly?',
+            options: [
+              'It usually carries a high interest rate with no asset or future earnings to show for it',
+              'It always has a 0% interest rate',
+              'It is the only kind of debt that is legal',
+              'It automatically improves your credit score the longer you carry it',
+            ],
+            correctIndex: 0,
+            explanation: 'High-interest, non-productive debt compounds against you the longest it\'s carried, which is why it\'s usually the top priority to pay down.',
+          },
+        ],
+      },
+      {
+        id: 'retirement-accounts',
+        title: 'Retirement accounts: 401(k)s & IRAs',
+        summary: 'Tax-advantaged ways to invest for the long run.',
+        sections: [
+          {
+            heading: 'Why these accounts are different',
+            body: "A 401(k) (offered through an employer) and an IRA (opened on your own) aren't investments themselves — they're tax-advantaged containers you hold investments like stocks, bonds, and funds inside. The tax benefit is the whole point: it either lowers your tax bill now or later, in exchange for agreeing to leave the money mostly untouched until retirement age.",
+          },
+          {
+            heading: 'Traditional vs. Roth',
+            body: 'A traditional 401(k) or IRA gives you a tax deduction on contributions today, but you pay income tax when you withdraw in retirement. A Roth version flips that: you contribute with money already taxed, but qualified withdrawals in retirement — including all the growth — are tax-free. Which is better often depends on whether you expect to be in a higher or lower tax bracket in retirement than you are now.',
+          },
+          {
+            heading: 'Don\'t leave a match on the table',
+            body: 'Many employers match a portion of what you contribute to a 401(k) — for example, 50% of your first 6% of salary contributed. That match is money on top of your paycheck for saving, effectively an instant, guaranteed return before the underlying investments even do anything. It\'s widely considered the first place extra savings should go, before other investing.',
+          },
+        ],
+        quiz: [
+          {
+            question: 'What is the key difference between a traditional and a Roth retirement account?',
+            options: [
+              'Traditional accounts are only for employers, Roth accounts are only for individuals',
+              'Traditional gives a tax break now and taxes withdrawals later; Roth taxes contributions now and withdrawals are tax-free later',
+              'There is no real difference',
+              'Roth accounts cannot hold stocks',
+            ],
+            correctIndex: 1,
+            explanation: 'The two account types simply move the tax break to a different point in time — now for traditional, later for Roth.',
+          },
+          {
+            question: 'Why is an employer 401(k) match often called "free money"?',
+            options: [
+              'Because the government pays it, not the employer',
+              'Because it adds extra money to your retirement savings on top of your own contribution, just for participating',
+              'Because it has no rules attached',
+              'Because it guarantees a specific investment return',
+            ],
+            correctIndex: 1,
+            explanation: 'A match is additional money contributed on your behalf — capturing it in full before investing elsewhere is usually the highest-value move available.',
+          },
+        ],
+      },
+      {
+        id: 'compound-interest',
+        title: 'The power of compound interest',
+        summary: 'Why starting early beats starting big.',
+        sections: [
+          {
+            heading: 'Interest earning interest',
+            body: "Compound interest is interest calculated not just on your original amount, but also on the interest it already earned. A balance growing at a steady rate doesn't just add the same dollar amount each year — it adds a growing amount, because each year's interest becomes part of the base the next year's interest is calculated on.",
+          },
+          {
+            heading: 'Why time matters more than almost anything else',
+            body: 'Because compounding accelerates over time, money invested early has far more years to snowball than the same amount invested later — even if the later amount is larger. Someone who invests a smaller amount starting in their 20s can end up with more at retirement than someone who invests more starting in their 40s, purely from the extra decades of compounding.',
+          },
+          {
+            heading: 'The same math works against you with debt',
+            body: 'Compounding isn\'t only a savings story — high-interest debt that isn\'t paid down compounds the same way, growing the balance owed faster over time. That\'s a big part of why paying down high-interest debt is often treated as comparable in priority to investing: the "return" on eliminating it is effectively that interest rate.',
+          },
+        ],
+        quiz: [
+          {
+            question: 'What makes compound interest different from simple interest?',
+            options: [
+              'Compound interest is always a lower rate',
+              'Compound interest is calculated on the original amount plus previously earned interest',
+              'Compound interest only applies to loans, not savings',
+              'There is no difference',
+            ],
+            correctIndex: 1,
+            explanation: 'Compounding means each period\'s interest becomes part of the base for the next period\'s interest — growth builds on growth.',
+          },
+          {
+            question: 'Why can an investor who starts younger end up ahead of one who invests more but starts later?',
+            options: [
+              'Younger investors always pick better stocks',
+              'More years of compounding lets a smaller amount grow into more than a larger amount with less time to compound',
+              'Older investors are charged higher fees automatically',
+              'It is not actually possible',
+            ],
+            correctIndex: 1,
+            explanation: 'Extra decades of compounding can outweigh a larger contribution made later, which is why starting early is so often emphasized.',
+          },
+        ],
+      },
+    ],
+  },
 ];
