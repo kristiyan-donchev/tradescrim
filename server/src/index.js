@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import marketRouter from './routes/market.js';
 import authRouter from './routes/auth.js';
@@ -30,6 +31,11 @@ const CLIENT_ORIGINS = (process.env.CLIENT_ORIGIN || 'http://localhost:5173,http
 // rate-limiting all users together or not limiting anyone meaningfully.
 app.set('trust proxy', 1);
 
+// contentSecurityPolicy and crossOriginEmbedderPolicy are meant for pages
+// that render HTML/embed content — this is a JSON-only API, so they'd just
+// add noise. The rest of helmet's defaults (HSTS, X-Content-Type-Options,
+// X-Frame-Options, Referrer-Policy, etc.) are still real defense-in-depth.
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(cors({ origin: CLIENT_ORIGINS, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());

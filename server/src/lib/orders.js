@@ -18,13 +18,19 @@ export async function listOrders(userId) {
 }
 
 export async function placeOrder(userId, { symbol, name, side, orderType, shares, limitPrice, stopPrice }) {
+  if (typeof symbol !== 'string' || !symbol.trim() || symbol.length > 20) {
+    throw new Error('Enter a valid ticker symbol.');
+  }
+  if (typeof name !== 'string' || !name.trim() || name.length > 200) {
+    throw new Error('Enter a valid company name.');
+  }
   if (side !== 'BUY' && side !== 'SELL') throw new Error('Side must be BUY or SELL.');
   if (!ORDER_TYPES.includes(orderType)) throw new Error('Unknown order type.');
-  if (!(shares > 0)) throw new Error('Enter a positive number of shares.');
+  if (!(shares > 0) || !Number.isFinite(shares) || shares > 1e9) throw new Error('Enter a valid number of shares.');
 
-  if (orderType === 'LIMIT' && !(limitPrice > 0)) throw new Error('Enter a valid limit price.');
-  if (orderType === 'STOP' && !(stopPrice > 0)) throw new Error('Enter a valid stop price.');
-  if (orderType === 'STOP_LIMIT' && !(limitPrice > 0 && stopPrice > 0)) {
+  if (orderType === 'LIMIT' && !(limitPrice > 0 && Number.isFinite(limitPrice))) throw new Error('Enter a valid limit price.');
+  if (orderType === 'STOP' && !(stopPrice > 0 && Number.isFinite(stopPrice))) throw new Error('Enter a valid stop price.');
+  if (orderType === 'STOP_LIMIT' && !(limitPrice > 0 && Number.isFinite(limitPrice) && stopPrice > 0 && Number.isFinite(stopPrice))) {
     throw new Error('Enter both a stop price and a limit price.');
   }
 

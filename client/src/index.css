@@ -951,6 +951,18 @@ input {
   margin-bottom: 10px;
 }
 
+/* Honeypot signup field — present in the DOM (so scripted bots that blindly
+   fill every input still populate it) but invisible and unreachable to real
+   users, unlike display:none/visibility:hidden which some bots skip. */
+.honeypot-field {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .field span {
   display: block;
   font-size: 13px;
