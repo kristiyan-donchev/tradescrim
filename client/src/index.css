@@ -293,6 +293,10 @@ input {
     flex: 1;
     min-width: 0;
     overflow-x: auto;
+    /* Fades the trailing edge so a partially-cut-off tab hints there's more
+       to scroll to, since iOS hides the scrollbar itself. */
+    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
   }
 
   .sidebar-nav-item {
@@ -314,6 +318,14 @@ input {
     padding-top: 0;
     gap: 4px;
     flex-shrink: 0;
+  }
+
+  .sidebar-footer .sidebar-nav-label {
+    display: none;
+  }
+
+  .sidebar-footer .sidebar-nav-item {
+    padding: 8px;
   }
 
   .profile-account-name {
