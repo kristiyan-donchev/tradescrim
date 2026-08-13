@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Icon } from './icons.jsx';
 import { GOOGLE_AUTH_URL } from '../lib/api.js';
+import LegalModal from './LegalModal.jsx';
 
 export default function AuthPage({ onBack }) {
   const [mode, setMode] = useState('login');
+  const [legalTab, setLegalTab] = useState(null);
   const { login, signup } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -164,10 +166,20 @@ export default function AuthPage({ onBack }) {
         </a>
 
         <p className="disclaimer-inline">
-          This is a local paper-trading simulator. Your account only exists on this machine — there is no
-          real money, brokerage, email verification, or password reset.
+          TradeScrim is a paper-trading simulator — there is no real money or brokerage account involved.
+          By continuing, you agree to our{' '}
+          <button type="button" className="link-button" onClick={() => setLegalTab('terms')}>
+            Terms of Service
+          </button>{' '}
+          and{' '}
+          <button type="button" className="link-button" onClick={() => setLegalTab('privacy')}>
+            Privacy Policy
+          </button>
+          .
         </p>
       </div>
+
+      {legalTab && <LegalModal initialTab={legalTab} onClose={() => setLegalTab(null)} />}
     </div>
   );
 }

@@ -1536,6 +1536,14 @@ input {
   margin: 0;
 }
 
+.legal-modal {
+  max-width: 640px;
+}
+
+.legal-modal-tabs {
+  margin-top: 12px;
+}
+
 .glossary {
   margin: 12px 0;
 }

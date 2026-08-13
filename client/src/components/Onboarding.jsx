@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { GLOSSARY_TERMS } from '../lib/glossary.js';
 import { Icon } from './icons.jsx';
+import LegalModal from './LegalModal.jsx';
 
 export default function Onboarding({ onClose }) {
+  const [legalTab, setLegalTab] = useState(null);
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -41,7 +45,19 @@ export default function Onboarding({ onClose }) {
         <button className="primary-button" onClick={onClose}>
           Got it, let's start
         </button>
+
+        <p className="disclaimer-inline">
+          <button type="button" className="link-button" onClick={() => setLegalTab('terms')}>
+            Terms of Service
+          </button>{' '}
+          ·{' '}
+          <button type="button" className="link-button" onClick={() => setLegalTab('privacy')}>
+            Privacy Policy
+          </button>
+        </p>
       </div>
+
+      {legalTab && <LegalModal initialTab={legalTab} onClose={() => setLegalTab(null)} />}
     </div>
   );
 }
