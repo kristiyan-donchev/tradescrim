@@ -170,7 +170,13 @@ const loginLimiter = rateLimit({
 });
 
 router.post('/signup', signupLimiter, async (req, res) => {
-  const { username, email, password, website } = req.body || {};
+  const { password, website } = req.body || {};
+  // Trimmed before validation — USERNAME_RE/EMAIL_RE are fully anchored
+  // (^...$), so a stray leading/trailing space (easy to pick up from mobile
+  // keyboard auto-suggest/autocorrect, or a careless copy-paste) would
+  // otherwise fail validation even though the visible text looks fine.
+  const username = typeof req.body?.username === 'string' ? req.body.username.trim() : req.body?.username;
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim() : req.body?.email;
 
   // Honeypot: a field the client hides from real users (see AuthPage.jsx),
   // so anything non-empty here is almost certainly a bot filling every
@@ -238,7 +244,11 @@ router.post('/signup', signupLimiter, async (req, res) => {
 });
 
 router.post('/login', loginLimiter, async (req, res) => {
-  const { username, password } = req.body || {};
+  const { password } = req.body || {};
+  // Trimmed for the same reason as signup — a stray space around an
+  // otherwise-correct username shouldn't turn into "invalid username or
+  // password" for someone whose keyboard added it invisibly.
+  const username = typeof req.body?.username === 'string' ? req.body.username.trim() : req.body?.username;
   if (typeof username !== 'string' || typeof password !== 'string') {
     return res.status(400).json({ error: 'Username and password are required.' });
   }
@@ -435,7 +445,7 @@ router.get('/me', requireAuth, async (req, res) => {
 });
 
 router.post('/username', requireAuth, async (req, res) => {
-  const { username } = req.body || {};
+  const username = typeof req.body?.username === 'string' ? req.body.username.trim() : req.body?.username;
   if (typeof username !== 'string' || !USERNAME_RE.test(username)) {
     return res.status(400).json({ error: 'Username must be 3-24 characters (letters, numbers, underscore).' });
   }
