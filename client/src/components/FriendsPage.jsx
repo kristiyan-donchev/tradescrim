@@ -73,7 +73,8 @@ export default function FriendsPage() {
     }
   }
 
-  async function handleUnfriend(userId) {
+  async function handleUnfriend(userId, username) {
+    if (!window.confirm(`Remove ${username} as a friend? You'll need to send a new request to re-add them.`)) return;
     try {
       setOverview(await unfriend(userId));
     } catch (err) {
@@ -175,7 +176,7 @@ export default function FriendsPage() {
                       type="button"
                       className="icon-button"
                       aria-label={`Remove ${f.username} as a friend`}
-                      onClick={() => handleUnfriend(f.userId)}
+                      onClick={() => handleUnfriend(f.userId, f.username)}
                     >
                       <Icon name="x" size={16} />
                     </button>
