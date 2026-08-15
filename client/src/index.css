@@ -353,6 +353,17 @@ input {
     padding: 16px 16px 40px;
     margin-top: 60px;
   }
+
+  /* VerifyEmailBanner renders before .app-shell, as a sibling — .main-content's
+     margin-top only pushes down content already inside .app-shell, so the
+     banner (and its Resend/dismiss buttons) was sitting right at the top of
+     the page, directly underneath the fixed sidebar. That didn't just hide it
+     visually — the fixed sidebar was also on top in the stacking order, so
+     taps meant for "Resend email" landed on whatever sidebar button happened
+     to overlap it instead (usually "Report a bug"). */
+  .verify-email-banner {
+    margin-top: 60px;
+  }
 }
 
 /* Profile button + dropdown + modal */
