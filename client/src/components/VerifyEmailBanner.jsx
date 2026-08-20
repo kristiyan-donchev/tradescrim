@@ -3,6 +3,14 @@ import { resendVerificationEmail } from '../lib/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Icon } from './icons.jsx';
 
+// Temporarily disabled: RESEND_API_KEY/EMAIL_FROM aren't set up on the
+// deployed server yet, so every "Resend email" click just fails and the
+// banner nags users over something they can't actually act on. The backend
+// (signup, /verify-email, /resend-verification) is untouched — flip this
+// back to true once real email sending is configured and it all works
+// immediately with no other changes needed.
+const EMAIL_VERIFICATION_ENABLED = false;
+
 // Shown for any logged-in, password-based account that hasn't clicked its
 // verification link yet — Google accounts are marked verified at signup
 // (see createGoogleUser) and never see this. Doesn't block anything in the
@@ -13,6 +21,7 @@ export default function VerifyEmailBanner() {
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [dismissed, setDismissed] = useState(false);
 
+  if (!EMAIL_VERIFICATION_ENABLED) return null;
   if (!user || user.emailVerified || !user.hasPassword || dismissed) return null;
 
   async function handleResend() {
