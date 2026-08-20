@@ -1329,6 +1329,32 @@ input {
   color: var(--text);
 }
 
+/* Error boundary fallback */
+.app-error-screen {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: center;
+  padding: 20px;
+}
+
+.app-error-screen h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.app-error-screen p {
+  color: var(--muted);
+  margin: 0 0 8px;
+  max-width: 320px;
+}
+
 .loading-mark {
   position: relative;
   width: 88px;
