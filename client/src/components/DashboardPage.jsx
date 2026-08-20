@@ -1,7 +1,6 @@
+import { lazy, Suspense } from 'react';
 import SearchBar from './SearchBar.jsx';
 import { Icon } from './icons.jsx';
-import PriceChart from './PriceChart.jsx';
-import PerformanceChart from './PerformanceChart.jsx';
 import PortfolioBreakdown from './PortfolioBreakdown.jsx';
 import TradePanel from './TradePanel.jsx';
 import OrdersPanel from './OrdersPanel.jsx';
@@ -13,6 +12,15 @@ import GuestGate from './GuestGate.jsx';
 import { useOrders } from '../hooks/useOrders.js';
 import { useWatchlist } from '../hooks/useWatchlist.js';
 import { STARTING_CASH, totalRealizedPnL } from '../lib/portfolio.js';
+
+// recharts is the app's single heaviest dependency (~100kB gzipped) — lazy
+// loading these two chart components means the rest of the dashboard
+// (holdings, search, trade panel) can render immediately instead of
+// blocking on it, with the charts popping in shortly after in parallel.
+const PriceChart = lazy(() => import('./PriceChart.jsx'));
+const PerformanceChart = lazy(() => import('./PerformanceChart.jsx'));
+
+const CHART_FALLBACK = <div className="chart-status">Loading chart…</div>;
 
 export default function DashboardPage({
   state,
@@ -53,7 +61,9 @@ export default function DashboardPage({
 
           <section className="panel">
             <h2>Portfolio performance</h2>
-            <PerformanceChart />
+            <Suspense fallback={CHART_FALLBACK}>
+              <PerformanceChart />
+            </Suspense>
           </section>
 
           <section className="panel">
@@ -104,7 +114,9 @@ export default function DashboardPage({
               )}
             </div>
 
-            <PriceChart symbol={selectedSymbol} />
+            <Suspense fallback={CHART_FALLBACK}>
+              <PriceChart symbol={selectedSymbol} />
+            </Suspense>
 
             {guest ? (
               <GuestGate

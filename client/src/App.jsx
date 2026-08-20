@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useAuth } from './context/AuthContext.jsx';
-import AuthPage from './components/AuthPage.jsx';
 import TradingApp from './components/TradingApp.jsx';
 import LoadingScreen from './components/LoadingScreen.jsx';
+
+// Most first visits land here as a guest browsing TradingApp — AuthPage's
+// code (plus the legal modal text it can open) doesn't need to be part of
+// that initial download until someone actually clicks "Log in".
+const AuthPage = lazy(() => import('./components/AuthPage.jsx'));
 
 export default function App() {
   const { user, checkingSession } = useAuth();
@@ -17,7 +21,11 @@ export default function App() {
   }
 
   if (!user && showAuth) {
-    return <AuthPage onBack={() => setShowAuth(false)} />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <AuthPage onBack={() => setShowAuth(false)} />
+      </Suspense>
+    );
   }
 
   if (!user) {

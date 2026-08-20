@@ -1,14 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import Sidebar from './Sidebar.jsx';
 import Onboarding from './Onboarding.jsx';
-import DashboardPage from './DashboardPage.jsx';
-import LeaderboardPage from './LeaderboardPage.jsx';
-import WatchlistPage from './WatchlistPage.jsx';
-import LearnPage from './LearnPage.jsx';
-import FriendsPage from './FriendsPage.jsx';
-import ChallengesPage from './ChallengesPage.jsx';
-import NewsPage from './NewsPage.jsx';
-import GamesPage from './GamesPage.jsx';
 import AdSlot from './AdSlot.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 import GuestGate from './GuestGate.jsx';
@@ -16,6 +8,21 @@ import AchievementToastHost from './AchievementToastHost.jsx';
 import VerifyEmailBanner from './VerifyEmailBanner.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
 import { fetchQuote } from '../lib/api.js';
+
+// Lazy-loaded per page (same reasoning as GamesPage's per-game split): only
+// the page someone is actually looking at needs to be downloaded. This
+// matters most for DashboardPage, which pulls in recharts — previously that
+// shipped in the same entry bundle as the login screen, so even a guest who
+// hadn't logged in yet paid for the app's single heaviest dependency before
+// seeing anything at all.
+const DashboardPage = lazy(() => import('./DashboardPage.jsx'));
+const LeaderboardPage = lazy(() => import('./LeaderboardPage.jsx'));
+const WatchlistPage = lazy(() => import('./WatchlistPage.jsx'));
+const LearnPage = lazy(() => import('./LearnPage.jsx'));
+const FriendsPage = lazy(() => import('./FriendsPage.jsx'));
+const ChallengesPage = lazy(() => import('./ChallengesPage.jsx'));
+const NewsPage = lazy(() => import('./NewsPage.jsx'));
+const GamesPage = lazy(() => import('./GamesPage.jsx'));
 
 const QUOTE_REFRESH_MS = 20000;
 
@@ -174,33 +181,35 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
             </div>
 
             <div className="page-content">
-              {page === 'dashboard' && (
-                <DashboardPage
-                  state={state}
-                  holdingsValue={holdingsValue}
-                  quotes={quotes}
-                  quoteError={quoteError}
-                  selectedSymbol={selectedSymbol}
-                  selectedQuote={selectedQuote}
-                  selectedHolding={selectedHolding}
-                  onSelect={handleSelect}
-                  buy={buy}
-                  sell={sell}
-                  error={error}
-                  guest={guest}
-                  onRequestLogin={onRequestLogin}
-                />
-              )}
-              {page === 'leaderboard' && <LeaderboardPage />}
-              {page === 'learn' && <LearnPage />}
-              {page === 'news' && <NewsPage />}
-              {page === 'games' && <GamesPage guest={guest} onRequestLogin={onRequestLogin} />}
-              {guest && GUEST_GATED_PAGES[page] && (
-                <GuestGate onRequestLogin={onRequestLogin} {...GUEST_GATED_PAGES[page]} />
-              )}
-              {!guest && page === 'watchlist' && <WatchlistPage onSelectSymbol={handleSelectFromWatchlist} />}
-              {!guest && page === 'friends' && <FriendsPage />}
-              {!guest && page === 'challenges' && <ChallengesPage />}
+              <Suspense fallback={<p className="empty-state">Loading…</p>}>
+                {page === 'dashboard' && (
+                  <DashboardPage
+                    state={state}
+                    holdingsValue={holdingsValue}
+                    quotes={quotes}
+                    quoteError={quoteError}
+                    selectedSymbol={selectedSymbol}
+                    selectedQuote={selectedQuote}
+                    selectedHolding={selectedHolding}
+                    onSelect={handleSelect}
+                    buy={buy}
+                    sell={sell}
+                    error={error}
+                    guest={guest}
+                    onRequestLogin={onRequestLogin}
+                  />
+                )}
+                {page === 'leaderboard' && <LeaderboardPage />}
+                {page === 'learn' && <LearnPage />}
+                {page === 'news' && <NewsPage />}
+                {page === 'games' && <GamesPage guest={guest} onRequestLogin={onRequestLogin} />}
+                {guest && GUEST_GATED_PAGES[page] && (
+                  <GuestGate onRequestLogin={onRequestLogin} {...GUEST_GATED_PAGES[page]} />
+                )}
+                {!guest && page === 'watchlist' && <WatchlistPage onSelectSymbol={handleSelectFromWatchlist} />}
+                {!guest && page === 'friends' && <FriendsPage />}
+                {!guest && page === 'challenges' && <ChallengesPage />}
+              </Suspense>
             </div>
 
             <footer className="app-footer">
