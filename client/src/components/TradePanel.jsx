@@ -44,6 +44,25 @@ export default function TradePanel({ quote, holding, cash, onBuy, onSell, onPlac
 
   const estimatedTotal = sharesNum > 0 && referencePrice > 0 ? sharesNum * referencePrice : 0;
 
+  // "Max" always floors, never rounds up — same reasoning as sharesFromAmount
+  // above: the resulting order should never cost more than the cash on hand
+  // (buying) or ask to sell more than what's actually owned (selling), even
+  // after floating-point rounding.
+  const holdingShares = holding ? holding.shares : 0;
+  const maxShares = side === 'SELL' ? holdingShares : referencePrice > 0 ? Math.floor((cash / referencePrice) * 1e6) / 1e6 : null;
+  const maxAmount =
+    side === 'BUY' ? Math.floor(cash * 100) / 100 : referencePrice > 0 ? Math.floor(holdingShares * referencePrice * 100) / 100 : null;
+
+  function handleMaxClick() {
+    if (inputMode === 'shares') {
+      if (maxShares != null) setShares(String(maxShares));
+    } else if (maxAmount != null) {
+      setAmount(String(maxAmount));
+    }
+  }
+
+  const maxDisabled = inputMode === 'shares' ? maxShares == null || maxShares <= 0 : maxAmount == null || maxAmount <= 0;
+
   const canSubmit =
     sharesNum > 0 &&
     Number.isFinite(sharesNum) &&
@@ -139,26 +158,36 @@ export default function TradePanel({ quote, holding, cash, onBuy, onSell, onPlac
       {inputMode === 'shares' ? (
         <label className="field">
           <span>Shares</span>
-          <input
-            type="number"
-            min="0"
-            step="any"
-            value={shares}
-            onChange={(e) => setShares(e.target.value)}
-            placeholder="0"
-          />
+          <div className="field-input-row">
+            <input
+              type="number"
+              min="0"
+              step="any"
+              value={shares}
+              onChange={(e) => setShares(e.target.value)}
+              placeholder="0"
+            />
+            <button type="button" className="max-button" onClick={handleMaxClick} disabled={maxDisabled}>
+              Max
+            </button>
+          </div>
         </label>
       ) : (
         <label className="field">
           <span>Amount ($)</span>
-          <input
-            type="number"
-            min="0"
-            step="any"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0.00"
-          />
+          <div className="field-input-row">
+            <input
+              type="number"
+              min="0"
+              step="any"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.00"
+            />
+            <button type="button" className="max-button" onClick={handleMaxClick} disabled={maxDisabled}>
+              Max
+            </button>
+          </div>
           {amountNum > 0 && (
             <span className="field-hint">
               ≈ {sharesFromAmount > 0 ? sharesFromAmount : 0} share(s) at ${referencePrice.toFixed(2)}

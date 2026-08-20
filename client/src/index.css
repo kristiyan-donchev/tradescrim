@@ -992,6 +992,40 @@ input {
   transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
 
+.field-input-row {
+  display: flex;
+  gap: 6px;
+}
+
+.field-input-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.max-button {
+  flex-shrink: 0;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-bg-hover);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.max-button:hover:not(:disabled) {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.max-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .field input:focus {
   outline: none;
   border-color: var(--primary);
