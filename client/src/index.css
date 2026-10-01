@@ -2931,8 +2931,26 @@ input {
   border-top: none;
 }
 
+.admin-feature-row > div {
+  flex: 1;
+  min-width: 0;
+}
+
+/* .primary-button is full-width by default, which would crush the text
+   column beside it. */
 .admin-feature-row > button {
   flex-shrink: 0;
+  width: auto;
+  min-width: 110px;
+}
+
+.admin-page .settings-item-desc {
+  max-width: 560px;
+}
+
+.admin-page .settings-item > button {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .admin-feature-name {
@@ -2963,5 +2981,9 @@ input {
   .admin-feature-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .admin-feature-row > button {
+    width: 100%;
   }
 }

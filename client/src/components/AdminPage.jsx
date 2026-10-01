@@ -50,7 +50,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <section className="panel">
+      <section className="panel admin-page">
         <h2>Preview mode</h2>
         <div className="settings-item">
           <div>
@@ -67,7 +67,7 @@ export default function AdminPage() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel admin-page">
         <h2>Features</h2>
         {loading && <p className="empty-state">Loading features…</p>}
         {errorMsg && <div className="form-error">{errorMsg}</div>}
