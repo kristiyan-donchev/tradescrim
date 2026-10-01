@@ -67,6 +67,12 @@ export function AuthProvider({ children }) {
     return updated;
   }, []);
 
+  const updateProfileVisibility = useCallback(async (profilePublic) => {
+    const updated = await api.updateProfileVisibility(profilePublic);
+    setUser(updated);
+    return updated;
+  }, []);
+
   const changePassword = useCallback(async ({ currentPassword, newPassword }) => {
     await api.updatePassword({ currentPassword, newPassword });
   }, []);
@@ -78,7 +84,17 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, checkingSession, signup, login, logout, updateUsername, changePassword, deleteAccount }}
+      value={{
+        user,
+        checkingSession,
+        signup,
+        login,
+        logout,
+        updateUsername,
+        updateProfileVisibility,
+        changePassword,
+        deleteAccount,
+      }}
     >
       {children}
     </AuthContext.Provider>

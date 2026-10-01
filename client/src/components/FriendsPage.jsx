@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Icon } from './icons.jsx';
+import UserProfileModal from './UserProfileModal.jsx';
+import { useFeatures } from '../context/FeaturesContext.jsx';
 import {
   fetchFriends,
   sendFriendRequest,
@@ -20,6 +22,8 @@ export default function FriendsPage() {
   const [formError, setFormError] = useState(null);
   const [formSuccess, setFormSuccess] = useState(null);
   const [sending, setSending] = useState(false);
+  const profilesEnabled = useFeatures().isEnabled('profile-privacy');
+  const [profileUserId, setProfileUserId] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -169,7 +173,18 @@ export default function FriendsPage() {
                 {overview.friends.map((f) => (
                   <div className="alert-row" key={f.id}>
                     <span>
-                      <strong>{f.username}</strong>
+                      {profilesEnabled ? (
+                        <button
+                          type="button"
+                          className="link-button"
+                          onClick={() => setProfileUserId(f.userId)}
+                          aria-label={`View ${f.username}'s profile`}
+                        >
+                          <strong>{f.username}</strong>
+                        </button>
+                      ) : (
+                        <strong>{f.username}</strong>
+                      )}
                       <span className="row-subtext"> friends since {formatDate(f.createdAt)}</span>
                     </span>
                     <button
@@ -186,6 +201,10 @@ export default function FriendsPage() {
             )}
           </section>
         </>
+      )}
+
+      {profileUserId != null && (
+        <UserProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
       )}
     </>
   );

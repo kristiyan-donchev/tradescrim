@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { fetchLeaderboard } from '../lib/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useFeatures } from '../context/FeaturesContext.jsx';
+import UserProfileModal from './UserProfileModal.jsx';
 
 const RANGES = ['1d', '1w', '1mo', '3mo', '6mo', '1y', 'all'];
 const RANGE_LABELS = { '1d': '1D', '1w': '1W', '1mo': '1M', '3mo': '3M', '6mo': '6M', '1y': '1Y', all: 'All' };
@@ -36,12 +38,14 @@ function MetricCell({ category, entry }) {
 
 export default function Leaderboard() {
   const { user } = useAuth();
+  const profilesEnabled = useFeatures().isEnabled('profile-privacy');
   const [category, setCategory] = useState('return');
   const [range, setRange] = useState('1mo');
   const [scope, setScope] = useState('global');
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [profileUserId, setProfileUserId] = useState(null);
 
   const categoryMeta = CATEGORIES.find((c) => c.key === category);
 
@@ -124,7 +128,18 @@ export default function Leaderboard() {
                   <tr key={entry.userId} className={isMe ? 'leaderboard-row-me' : ''}>
                     <td className="leaderboard-rank">#{entry.rank}</td>
                     <td>
-                      {entry.username}
+                      {profilesEnabled ? (
+                        <button
+                          type="button"
+                          className="link-button"
+                          onClick={() => setProfileUserId(entry.userId)}
+                          aria-label={`View ${entry.username}'s profile`}
+                        >
+                          {entry.username}
+                        </button>
+                      ) : (
+                        entry.username
+                      )}
                       {isMe && ' (you)'}
                     </td>
                     <MetricCell category={category} entry={entry} />
@@ -136,6 +151,9 @@ export default function Leaderboard() {
         </div>
       )}
       {!loading && !errorMsg && entries.length === 0 && <p className="empty-state">No traders to rank yet.</p>}
+      {profileUserId != null && (
+        <UserProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
+      )}
     </div>
   );
 }

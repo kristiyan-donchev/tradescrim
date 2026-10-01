@@ -199,6 +199,26 @@ export function updateUsername(username) {
   return postJson(`${BASE}/auth/username`, { username }).then((d) => d.user);
 }
 
+export function updateProfileVisibility(profilePublic) {
+  return postJson(`${BASE}/auth/privacy`, { profilePublic }).then((d) => d.user);
+}
+
+export function fetchFeatures() {
+  return getJson(`${BASE}/features`);
+}
+
+export function fetchAdminFeatures() {
+  return getJson(`${BASE}/admin/features`).then((d) => d.features || []);
+}
+
+export function setFeaturePublished(key, published) {
+  return postJson(`${BASE}/admin/features/${encodeURIComponent(key)}`, { published }).then((d) => d.features || []);
+}
+
+export function fetchUserProfile(userId) {
+  return getJson(`${BASE}/users/${encodeURIComponent(userId)}/profile`).then((d) => d.profile);
+}
+
 export function updatePassword({ currentPassword, newPassword }) {
   return postJson(`${BASE}/auth/password`, { currentPassword, newPassword });
 }

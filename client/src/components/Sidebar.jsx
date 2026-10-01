@@ -3,6 +3,7 @@ import ProfileMenu from './ProfileMenu.jsx';
 import ReportBugButton from './ReportBugButton.jsx';
 import { Icon } from './icons.jsx';
 import { fetchUnseenAlertCount, fetchUnseenFriendRequestCount } from '../lib/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const NAV_ITEMS = [
   { key: 'dashboard', label: 'Dashboard', icon: 'bar-chart' },
@@ -20,6 +21,8 @@ const UNSEEN_POLL_MS = 30000;
 export default function Sidebar({ page, onNavigate, onShowHelp, onReset, guest = false, onRequestLogin }) {
   const [unseenAlerts, setUnseenAlerts] = useState(0);
   const [unseenRequests, setUnseenRequests] = useState(0);
+  const { user } = useAuth();
+  const navItems = user?.isAdmin ? [...NAV_ITEMS, { key: 'admin', label: 'Admin', icon: 'sliders' }] : NAV_ITEMS;
 
   useEffect(() => {
     if (guest) return undefined;
@@ -54,7 +57,7 @@ export default function Sidebar({ page, onNavigate, onShowHelp, onReset, guest =
       </button>
 
       <div className="sidebar-nav">
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <button
             key={item.key}
             type="button"

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useFeatures } from '../context/FeaturesContext.jsx';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { Icon } from './icons.jsx';
 import { fetchAchievements } from '../lib/api.js';
@@ -9,6 +10,11 @@ const THEME_OPTIONS = [
   { value: 'light', label: 'Light', icon: 'sun' },
   { value: 'dark', label: 'Dark', icon: 'moon' },
   { value: 'system', label: 'System', icon: 'monitor' },
+];
+
+const VISIBILITY_OPTIONS = [
+  { value: true, label: 'Public', icon: 'globe' },
+  { value: false, label: 'Private', icon: 'lock' },
 ];
 
 function formatMemberSince(createdAt) {
@@ -30,7 +36,8 @@ function formatEarnedDate(earnedAt) {
 }
 
 export default function ProfileMenu({ onReset }) {
-  const { user, logout, updateUsername, changePassword, deleteAccount } = useAuth();
+  const { user, logout, updateUsername, updateProfileVisibility, changePassword, deleteAccount } = useAuth();
+  const { isEnabled, isPreview } = useFeatures();
   const { mode, setMode } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeModal, setActiveModal] = useState(null); // null | 'profile' | 'settings'
@@ -40,6 +47,9 @@ export default function ProfileMenu({ onReset }) {
   const [usernameError, setUsernameError] = useState(null);
   const [usernameSaving, setUsernameSaving] = useState(false);
   const [usernameSuccess, setUsernameSuccess] = useState(false);
+
+  const [visibilitySaving, setVisibilitySaving] = useState(false);
+  const [visibilityError, setVisibilityError] = useState(null);
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -73,6 +83,7 @@ export default function ProfileMenu({ onReset }) {
       setUsernameInput(user.username);
       setUsernameError(null);
       setUsernameSuccess(false);
+      setVisibilityError(null);
       setCurrentPassword('');
       setNewPassword('');
       setPasswordError(null);
@@ -94,6 +105,19 @@ export default function ProfileMenu({ onReset }) {
       setUsernameError(err.message);
     } finally {
       setUsernameSaving(false);
+    }
+  }
+
+  async function handleVisibilityChange(profilePublic) {
+    if (profilePublic === user.profilePublic || visibilitySaving) return;
+    setVisibilityError(null);
+    setVisibilitySaving(true);
+    try {
+      await updateProfileVisibility(profilePublic);
+    } catch (err) {
+      setVisibilityError(err.message);
+    } finally {
+      setVisibilitySaving(false);
     }
   }
 
@@ -320,6 +344,41 @@ export default function ProfileMenu({ onReset }) {
                   ))}
                 </div>
               </div>
+
+              {isEnabled('profile-privacy') && (
+                <>
+                  <div className="settings-divider" />
+
+                  <div className="settings-section">
+                    <div className="settings-section-title">
+                      Profile visibility
+                      {isPreview('profile-privacy') && <span className="preview-tag">Preview</span>}
+                    </div>
+                    <div className="settings-section-desc">
+                      {user.profilePublic
+                        ? 'Anyone who opens your profile can see your holdings and trade history.'
+                        : 'Your holdings and trade history are hidden from everyone else.'}
+                    </div>
+                    <div className="theme-switch" role="radiogroup" aria-label="Profile visibility">
+                      {VISIBILITY_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.label}
+                          type="button"
+                          role="radio"
+                          aria-checked={user.profilePublic === opt.value}
+                          className={user.profilePublic === opt.value ? 'theme-switch-option active' : 'theme-switch-option'}
+                          onClick={() => handleVisibilityChange(opt.value)}
+                          disabled={visibilitySaving}
+                        >
+                          <Icon name={opt.icon} size={16} />
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                    {visibilityError && <div className="form-error">{visibilityError}</div>}
+                  </div>
+                </>
+              )}
 
               <div className="settings-divider" />
 

@@ -15,6 +15,9 @@ import challengesRouter from './routes/challenges.js';
 import bugReportsRouter from './routes/bugReports.js';
 import lessonsRouter from './routes/lessons.js';
 import gamesRouter from './routes/games.js';
+import usersRouter from './routes/users.js';
+import featuresRouter from './routes/features.js';
+import adminRouter from './routes/admin.js';
 import { initSchema } from './db.js';
 import { getPrices } from './lib/quotes.js';
 import { getActiveAlertSymbols, processAlerts } from './lib/alerts.js';
@@ -52,6 +55,9 @@ app.use('/api/challenges', challengesRouter);
 app.use('/api/bugs', bugReportsRouter);
 app.use('/api/lessons', lessonsRouter);
 app.use('/api/games', gamesRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/features', featuresRouter);
+app.use('/api/admin', adminRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true });

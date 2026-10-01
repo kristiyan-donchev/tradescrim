@@ -13,6 +13,7 @@ import {
   generateUsernameFromEmail,
   updateUsername,
   updatePasswordHash,
+  updateProfileVisibility,
   deleteAccount,
   toPublicUser,
   findUserByVerificationToken,
@@ -21,7 +22,7 @@ import {
 } from '../lib/users.js';
 import { sendVerificationEmail } from '../lib/email.js';
 import { signToken, COOKIE_NAME } from '../lib/jwt.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, requireFeature } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -462,6 +463,20 @@ router.post('/username', requireAuth, async (req, res) => {
     }
     console.error('update username error', err.message);
     res.status(500).json({ error: 'Something went wrong updating your username.' });
+  }
+});
+
+router.post('/privacy', requireAuth, requireFeature('profile-privacy'), async (req, res) => {
+  const { profilePublic } = req.body || {};
+  if (typeof profilePublic !== 'boolean') {
+    return res.status(400).json({ error: 'profilePublic must be true or false.' });
+  }
+  try {
+    const user = await updateProfileVisibility(req.userId, profilePublic);
+    res.json({ user: toPublicUser(user) });
+  } catch (err) {
+    console.error('update profile visibility error', err.message);
+    res.status(500).json({ error: 'Something went wrong updating your profile visibility.' });
   }
 });
 

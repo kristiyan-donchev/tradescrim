@@ -1,4 +1,5 @@
 import { pool, STARTING_CASH } from '../db.js';
+import { isAdminUser } from './features.js';
 
 // Password sign-ups start unverified with a one-time token attached
 // immediately, so the caller can email it out in the same request without a
@@ -80,6 +81,14 @@ export async function updatePasswordHash(userId, passwordHash) {
   await pool.query(`UPDATE users SET password_hash = $1 WHERE id = $2`, [passwordHash, userId]);
 }
 
+export async function updateProfileVisibility(userId, profilePublic) {
+  const result = await pool.query(`UPDATE users SET profile_public = $1 WHERE id = $2 RETURNING *`, [
+    profilePublic,
+    userId,
+  ]);
+  return result.rows[0];
+}
+
 export async function findUserByVerificationToken(token) {
   const result = await pool.query(`SELECT * FROM users WHERE email_verification_token = $1`, [token]);
   return result.rows[0] || null;
@@ -144,5 +153,7 @@ export function toPublicUser(user) {
     createdAt: user.created_at,
     hasPassword: Boolean(user.password_hash),
     emailVerified: Boolean(user.email_verified),
+    profilePublic: Boolean(user.profile_public),
+    isAdmin: isAdminUser(user),
   };
 }

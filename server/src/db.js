@@ -54,6 +54,12 @@ export async function initSchema() {
     ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verification_expires_at BIGINT;
     UPDATE users SET email_verified = TRUE WHERE email_verified = FALSE AND created_at < ${EMAIL_VERIFICATION_BACKFILL_CUTOFF};
 
+    -- Whether other users can see this account's holdings and trade history
+    -- on its profile. Defaults to private so existing accounts — whose
+    -- holdings were never visible to anyone before this shipped — don't get
+    -- exposed without opting in.
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_public BOOLEAN NOT NULL DEFAULT FALSE;
+
     CREATE TABLE IF NOT EXISTS holdings (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id),
@@ -219,5 +225,13 @@ export async function initSchema() {
       meta JSONB
     );
     CREATE INDEX IF NOT EXISTS idx_game_results_user_game ON game_results(user_id, game_id);
+
+    -- Publish state for features gated behind a flag (see lib/features.js,
+    -- which holds the list of features itself). No row means unpublished.
+    CREATE TABLE IF NOT EXISTS feature_flags (
+      key TEXT PRIMARY KEY,
+      published BOOLEAN NOT NULL DEFAULT FALSE,
+      updated_at BIGINT NOT NULL
+    );
   `);
 }

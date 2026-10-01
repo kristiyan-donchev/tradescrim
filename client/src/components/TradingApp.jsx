@@ -8,6 +8,7 @@ import AchievementToastHost from './AchievementToastHost.jsx';
 import VerifyEmailBanner from './VerifyEmailBanner.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
 import { fetchQuote } from '../lib/api.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 // Lazy-loaded per page (same reasoning as GamesPage's per-game split): only
 // the page someone is actually looking at needs to be downloaded. This
@@ -23,6 +24,7 @@ const FriendsPage = lazy(() => import('./FriendsPage.jsx'));
 const ChallengesPage = lazy(() => import('./ChallengesPage.jsx'));
 const NewsPage = lazy(() => import('./NewsPage.jsx'));
 const GamesPage = lazy(() => import('./GamesPage.jsx'));
+const AdminPage = lazy(() => import('./AdminPage.jsx'));
 
 const QUOTE_REFRESH_MS = 20000;
 
@@ -59,6 +61,10 @@ const PAGE_META = {
     title: 'Challenges',
     subtitle: 'Time-boxed ROI competitions with your friends — badges for participating and winning.',
   },
+  admin: {
+    title: 'Admin',
+    subtitle: 'Preview unpublished features and publish them when they are ready.',
+  },
 };
 
 const GUEST_GATED_PAGES = {
@@ -82,6 +88,13 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
   const [quotes, setQuotes] = useState({});
   const [quoteError, setQuoteError] = useState(null);
   const [showHelp, setShowHelp] = useState(false);
+  const { user } = useAuth();
+
+  // Leaving the Admin page behind on logout (page state lives in App and
+  // survives it) shouldn't strand a non-admin on an empty Admin screen.
+  useEffect(() => {
+    if (page === 'admin' && !user?.isAdmin) setPage('dashboard');
+  }, [page, user?.isAdmin, setPage]);
 
   const symbolsToTrack = Array.from(
     new Set([...Object.keys(state.holdings), ...(selectedSymbol ? [selectedSymbol] : [])])
@@ -209,6 +222,7 @@ export default function TradingApp({ guest = false, onRequestLogin, page, setPag
                 {!guest && page === 'watchlist' && <WatchlistPage onSelectSymbol={handleSelectFromWatchlist} />}
                 {!guest && page === 'friends' && <FriendsPage />}
                 {!guest && page === 'challenges' && <ChallengesPage />}
+                {!guest && page === 'admin' && user?.isAdmin && <AdminPage />}
               </Suspense>
             </div>
 
