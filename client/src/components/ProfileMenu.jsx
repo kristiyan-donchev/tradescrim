@@ -240,7 +240,14 @@ export default function ProfileMenu({ onReset }) {
               <div className="profile-info">
                 <div className="profile-avatar-large">{initial}</div>
                 <div>
-                  <div className="profile-info-username">{user.username}</div>
+                  <div className="profile-info-username">
+                    {user.username}
+                    {user.isAdmin && (
+                      <span className="profile-admin-badge">
+                        <Icon name="crown" size={12} /> Admin
+                      </span>
+                    )}
+                  </div>
                   <div className="profile-info-email">{user.email}</div>
                   {memberSince && <div className="profile-info-meta">Member since {memberSince}</div>}
                 </div>

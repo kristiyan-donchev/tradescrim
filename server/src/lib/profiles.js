@@ -1,4 +1,5 @@
 import { pool } from '../db.js';
+import { isAdminUser } from './features.js';
 
 const PROFILE_TRANSACTIONS_LIMIT = 50;
 
@@ -8,17 +9,20 @@ const PROFILE_TRANSACTIONS_LIMIT = 50;
 // viewer is the owner. Cash is never included either way.
 export async function getUserProfile(userId, viewerId) {
   const userResult = await pool.query(
-    `SELECT id, username, created_at, profile_public FROM users WHERE id = $1`,
+    `SELECT id, username, email, email_verified, created_at, profile_public FROM users WHERE id = $1`,
     [userId]
   );
   const user = userResult.rows[0];
   if (!user) return null;
 
+  // email/email_verified are selected only to work out isAdmin — never
+  // include them in the returned profile.
   const profile = {
     id: user.id,
     username: user.username,
     createdAt: user.created_at,
     isPrivate: !user.profile_public,
+    isAdmin: isAdminUser(user),
   };
   if (profile.isPrivate && viewerId !== user.id) return profile;
 

@@ -67,6 +67,11 @@ export default function UserProfileModal({ userId, onClose }) {
               <div>
                 <div className="profile-info-username">
                   {profile.username}
+                  {profile.isAdmin && (
+                    <span className="profile-admin-badge">
+                      <Icon name="crown" size={12} /> Admin
+                    </span>
+                  )}
                   {profile.isPrivate && (
                     <span className="profile-private-badge">
                       <Icon name="lock" size={12} /> Private
